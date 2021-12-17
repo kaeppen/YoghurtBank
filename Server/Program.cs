@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Identity.Web;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+
+
+var connectionString = builder.Configuration.GetConnectionString("Yoghurtbase:connectionString");
+
+builder.Services.AddDbContext<YoghurtContext>(opt => opt.UseNpgsql(connectionString));
+builder.Services.AddScoped<IYoghurtContext, YoghurtContext>();
+builder.Services.AddScoped<ICollaborationRequestRepository, CollaborationRequestRepository>();
+builder.Services.AddScoped<IIdeaRepository, IdeaRepository>();
+builder.Services.AddScoped<CollaborationRequestController, CollaborationRequestController>();
+builder.Services.AddScoped<IdeaController, IdeaController>();
+builder.Services.AddScoped<UserController, UserController>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
