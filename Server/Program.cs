@@ -5,6 +5,9 @@ using Microsoft.Identity.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.OpenApi.Models;
+using YoghurtBank.Server;
+using YoghurtBank.Shared;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,5 +70,7 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+await app.SeedAsync();
 
 app.Run();
