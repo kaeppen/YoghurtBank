@@ -16,7 +16,13 @@
     <ValidationSummary />
     <div class="form-group">
         <label for="Name">Name</label>
-        <InputText id="The name which will be displayed to other users" @bind-Value="user.UserName" class="form-control" />
+        <InputText id="The name which will be displayed to other users" readonly="readonly" placeholder="@user.UserName" @bind-Value="user.UserName" class="form-control" />
+    </div>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <InputText id="The mail which will be displayed to other users" readonly="readonly" placeholder="@user.Email" @bind-Value="user.Email" class="form-control" />
     </div>
     <div class="form-group">
         <div>Type</div>
@@ -26,10 +32,10 @@
         </InputRadioGroup>
         <h1>@user.UserType</h1>
     </div>
-    <div class="form-group">
+    @* <div class="form-group">
         <label for="Email">Please check that this is the correct email address before submitting</label>
-        <p> @email </p>
-    </div>
+        <p> @user.Email </p>
+    </div> *@
     <div class="form-group">
         <br />
         <button type="submit" class="btn btn-success" >Create</button>
@@ -40,33 +46,33 @@
 
     private AuthenticationState authState;
 
-    private string email = "";
     private UserCreateDTO user = new UserCreateDTO(); 
 
     protected override async Task OnInitializedAsync()
     {
         authState = await auth.GetAuthenticationStateAsync();
 
-        email = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user.Email = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user.UserName = authState.User.Claims.Where(c => c.Type.Equals("name")).Select(c => c.Value).FirstOrDefault();
         var claims = auth.GetAuthenticationStateAsync().Result.User.Claims; 
-        foreach(var claim in claims)
+        @* foreach(var claim in claims)
         {
             if(claim.Type.Equals("preferred_username")) email = claim.Value;
-        }
-        foreach(var claim in claims)
+        } *@
+        @* foreach(var claim in claims)
         {
             Console.WriteLine("Type"+claim.Type);
             Console.WriteLine("Value"+claim.Value);
             Console.WriteLine("Issuer"+claim.Issuer);
             Console.WriteLine("Subject"+claim.Subject);
-        }
+        }  *@
     }
 
     private async Task HandleValidSubmit()
     {
         @* var userCreate = new UserCreateDTO{UserName = user.UserName, UserType = userType, 
         Email = email}; *@
-        user.Email = email;
+        Console.WriteLine(user.Email);
 
         var result = await Http.PostAsJsonAsync("https://localhost:7095/api/user", user);
         Console.WriteLine($"Created {result}"); 
