@@ -32,6 +32,8 @@
         var claims = auth.GetAuthenticationStateAsync().Result.User.Claims; 
         foreach(var claim in claims)
         {
+            //navn
+            //email
             if(claim.Type.Equals("name")) name = claim.Value;
             if(claim.Type.Equals("preferred_username")) mail = claim.Value;
         }
@@ -40,10 +42,30 @@
         //var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value);
         Console.WriteLine(name);
         Console.WriteLine(mail);
+        FindOrCreate("HenningG@gmail.com");
     }
 
     private void GetEmail() {
         Console.WriteLine(authState.User.Identity.Name);
+    }
+
+    
+    private async Task<UserDetailsDTO> FindOrCreate(string email)
+    {
+        var user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/user/mail/{email}");
+        if(user != null)
+        {
+            //sæt et "requests" felt til at være user.requests 
+            Console.WriteLine(user.UserName);
+            Console.WriteLine(user.Email);
+            return user; 
+        }
+        else
+        {
+            return null;
+            //create brugeren :) 
+        }
+
     }
 
 }

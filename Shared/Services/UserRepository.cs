@@ -75,6 +75,17 @@
             return entity.Id;
         }
 
+        public async Task<UserDetailsDTO> FindUserByEmail(string email) {
+            
+            var user = await _context.Users.Where(u => u.Email == email).Select(u => new UserDetailsDTO{
+              UserName = u.UserName,
+              UserType = u.GetType().Name,
+              Email = u.Email
+            }).FirstOrDefaultAsync();
+
+            return user; 
+        }
+
 
         public async Task<IReadOnlyCollection<UserDetailsDTO>> GetAllSupervisors()
         {

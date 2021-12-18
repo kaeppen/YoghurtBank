@@ -29,9 +29,18 @@
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(UserDetailsDTO), StatusCodes.Status200OK)]
         [HttpGet("{id}")]
-        public async Task<UserDetailsDTO> Get(int id) 
+        public async Task<UserDetailsDTO> GetById(int id) 
         {
             return await _repository.FindUserByIdAsync(id);
+        }
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(UserDetailsDTO), StatusCodes.Status200OK)]
+        [HttpGet("{email}")]
+        [Route("api/[controller]/mail")]
+        public async Task<UserDetailsDTO> GetByEmail(string email) 
+        {
+            return await _repository.FindUserByEmail(email);
         }
 
         
