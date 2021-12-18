@@ -11,4 +11,5 @@
         
         Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsBySupervisorAsync(int supervisorId);
         Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByStudentAsync(int studentId);
+        Task<bool> FindUserType(int id);
     }

@@ -8,21 +8,47 @@
 @inject AuthenticationStateProvider auth
 
 <PageTitle>View My CollaborationRequest</PageTitle>
-<h1>Your Collaboration Request</h1>
+<h1>Your collaboration request</h1>
 
-<!--<div>
-    <button type="submit" @onclick="@(() => FindOrCreate())" class="btn btn-success">Requests</button>
-</div>-->
+<div style="display: flex">
+@if(requests == null || requests.Length == 0)
+{
+    <h2>No requests!</h2>
+}
+else 
+{
+    foreach(var request in requests)
+    {
+        <div class="card" style="width: 18rem;">
+        <div class="card-header">
+            <h3>Request</h3>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Requester: <br> @request.StudentId</h5>
+            <p class="card-text">Requested: <br> @request.SupervisorId</p>
+            <p class="card-text">Application: <br> @request.Application</p>
+            <p class="card-text">Status: <br> @request.Status</p>
+            
+        </div>
+        <div class="card-body">
+            @* <button type="button" class="btn btn-primary" style="background-color: green" @onclick="RequestCollab">Request collaboration</button> *@
+            @* <button type="button" class="btn btn-primary" @onclick="@(() => Nav(idea.Id))">Show details</button>  *@
+        </div>
+    </div>
+    }
+}
+</div>
+
 
 @code {
 
-    private UserDetailsDTO[]? users;
     private AuthenticationState authState;
+
+    private CollaborationRequestDetailsDTO[] requests;
 
     protected override async Task OnInitializedAsync()
     {
         authState = await auth.GetAuthenticationStateAsync();
-        //users = await Http.GetFromJsonAsync<UserDetailsDTO[]>($"https://localhost:7194/api/user");
 
         var name = "";
         var mail = "";
@@ -35,12 +61,10 @@
             if(claim.Type.Equals("preferred_username")) mail = claim.Value;
         }
 
-        //var name = authState.User.Claims.Where(c => c.Type.Equals("name")).Select(c => c.Value); 
-        //var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value);
         Console.WriteLine(name);
         Console.WriteLine(mail);
-        //FindOrCreate("HenningG@gmail.com");
-        FindOrCreate(mail);
+        FindOrCreate("Minmail@webspeed.dk");
+        //FindOrCreate(mail);
     }
 
     private void GetEmail() {
@@ -48,20 +72,24 @@
     }
 
     
-    private async Task<UserDetailsDTO> FindOrCreate(string email)
+    private async Task<CollaborationRequestDetailsDTO[]> FindOrCreate(string email)
     {
         var user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{email}");
         if(user != null)
         {
             //sæt et "requests" felt til at være user.requests 
-            Console.WriteLine(user.UserName);
+            @* Console.WriteLine(user.UserName);
             Console.WriteLine(user.Email);
-            return user; 
+            Console.WriteLine(user.Id);*@
+
+            requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
+
+            return requests; 
         }
         else
         {
             return null;
-            //create brugeren :) 
+            //Redirect to register user site.
         }
 
     }

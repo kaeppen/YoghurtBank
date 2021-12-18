@@ -61,9 +61,12 @@ using Xunit;
                 Status = CollaborationRequestStatus.Waiting
             };
             var requests = new List<CollaborationRequestDetailsDTO>{cb1, cb2}.AsReadOnly();
+
+            _repoMock.Setup(m => m.FindUserType(1)).ReturnsAsync(false);
+
             _repoMock.Setup(m => m.FindRequestsByStudentAsync(1)).ReturnsAsync(requests);
 
-            var result = await _controller.GetRequestsByUser(false, 1);
+            var result = await _controller.GetRequestsByUser(1);
 
             Assert.NotNull(result);
             Assert.NotEmpty(result);
@@ -72,13 +75,13 @@ using Xunit;
         }
 
         [Fact]
-        public async Task GetRequestsByUser_given_true_returns_finds_requests_by_supervisor()
+        public async Task GetRequestsByUser_given_SupervisorId_returns_find_requests_by_supervisor()
         {
             
             var cb1 = new CollaborationRequestDetailsDTO
             {
                 StudentId = 1,
-                SupervisorId = 2,
+                SupervisorId = 4,
                 Application = "Science",
                 Status = CollaborationRequestStatus.Waiting
             };
@@ -86,15 +89,18 @@ using Xunit;
             var cb2 = new CollaborationRequestDetailsDTO
             {
                 StudentId = 1,
-                SupervisorId = 2,
+                SupervisorId = 4,
                 Application = "Not Science",
                 Status = CollaborationRequestStatus.Waiting
             };
 
-            _repoMock.Setup(m => m.FindRequestsBySupervisorAsync(2))
+            _repoMock.Setup(m => m.FindUserType(4)).ReturnsAsync(true);
+
+            _repoMock.Setup(m => m.FindRequestsBySupervisorAsync(4))
                 .ReturnsAsync(new List<CollaborationRequestDetailsDTO> {cb1, cb2}.AsReadOnly());
             
-            var result = await _controller.GetRequestsByUser(true, 2);
+            var result = await _controller.GetRequestsByUser(4);
+            
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.Equal(cb1, result.ElementAt(0));

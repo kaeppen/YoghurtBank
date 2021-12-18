@@ -129,26 +129,6 @@ namespace ServicesTests
         }
 
         [Fact]
-        public async Task FindIdByEmail_given_valid_email_returns_correct_id() 
-        {
-            var email = "MetteFredriksen@yahoo.dk";
-            var expected = 1;
-            var actual = await _repository.FindIdByEmail(email);
-
-            Assert.Equal(expected, actual); 
-        }
-
-         [Fact]
-        public async Task FindIdByEmail_given_email_of_non_existing_user_returns_minus_one() 
-        {
-            var email = "bumle@gmail.com";
-            var expected = -1;
-            var actual = await _repository.FindIdByEmail(email);
-
-            Assert.Equal(expected, actual); 
-        }
-
-        [Fact]
         public async Task CreateAsync_given_user_with_type_student_Returns_UserDetailsDTO()
         {
             var user = new UserCreateDTO { UserName = "Hanne", UserType = "Student", Email = "Kleppert@live.dk" };

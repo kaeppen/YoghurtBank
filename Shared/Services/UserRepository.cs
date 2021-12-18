@@ -78,6 +78,7 @@
         public async Task<UserDetailsDTO> FindUserByEmail(string email) {
             
             var user = await _context.Users.Where(u => u.Email == email).Select(u => new UserDetailsDTO{
+              Id = u.Id,
               UserName = u.UserName,
               UserType = u.GetType().Name,
               Email = u.Email
@@ -85,21 +86,6 @@
 
             return user; 
         }
-
-        public async Task<int> FindIdByEmail(string email) 
-        {
-            var userId = await _context.Users.Where(u => u.Email == email).Select(u => u.Id).FirstOrDefaultAsync();
-
-            if (userId == 0) {
-                return -1;
-            } else
-            {
-                return userId;
-            }
-        } 
-
-
-
         public async Task<IReadOnlyCollection<UserDetailsDTO>> GetAllSupervisors()
         {
             // var users = await _context.Users.Where(c => c.GetType() == typeof(Supervisor))

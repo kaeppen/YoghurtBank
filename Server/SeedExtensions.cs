@@ -179,10 +179,10 @@ using YoghurtBank.Shared;
                 Status = CollaborationRequestStatus.Waiting,
                 Idea = Idea3
             };
-           
 
             if (!await context.Users.AnyAsync() && !await context.Ideas.AnyAsync() && !await context.CollaborationRequests.AnyAsync())
             {
+
                 context.Users.Add(student1);
                 context.Users.Add(student2);
                 context.Users.Add(student3);
@@ -198,7 +198,7 @@ using YoghurtBank.Shared;
                 context.CollaborationRequests.Add(collabRequest3);
                 context.CollaborationRequests.Add(collabRequest4);
                 context.CollaborationRequests.Add(collabRequest5);
-                context.CollaborationRequests.Add(collabRequest6);
+                context.CollaborationRequests.Add(collabRequest6); 
                 await context.SaveChangesAsync();
             }
         }

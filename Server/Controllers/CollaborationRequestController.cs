@@ -3,7 +3,7 @@
 
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/collaborationRequest")]
     //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class CollaborationRequestController : ControllerBase
     {
@@ -53,18 +53,23 @@
         }
 
         [Authorize]
-        [HttpGet("{userid}")]
+        [HttpGet("{userId}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> GetRequestsByUser(bool isSupervisor, int userId)
+        [Route("/api/collaborationRequest/id/{userId}")]
+        public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> GetRequestsByUser(int userId)
         {
+            var isSupervisor = await _repository.FindUserType(userId);
+
             if (isSupervisor)
             {
+                Console.WriteLine("i am");
                 return await _repository.FindRequestsBySupervisorAsync(userId);
             }
             else
             {
                 return await _repository.FindRequestsByStudentAsync(userId);
-            }
+            } 
+            
         }
 
 
