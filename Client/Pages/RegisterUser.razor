@@ -1,0 +1,68 @@
+@page "/registerUser"
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using YoghurtBank.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+@inject NavigationManager NavMan
+@inject AuthenticationStateProvider auth
+
+<PageTitle>Register User</PageTitle>
+<h1>Register as a supervisor or student to use the projectbank</h1>
+
+<EditForm Model="@user" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <InputText id="The name which will be displayed to other users" @bind-Value="user.UserName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <div>Type</div>
+        <InputRadioGroup>
+            <InputRadio id="Supervisor" @onclick="@(()=>userType='Supervisor')" class="form-check-input" />
+            <InputRadio id="Student" @onclick="@(()=>userType='Student')" class="form-check-input" />
+                @*<label class="form-check-label" for="Bachelor">@IdeaType.Bachelor</label> *@
+        </InputRadioGroup>
+    </div>
+    <div class="form-group">
+        <label for="Email">Please check that this is the correct email address before submitting</label>
+        <p> @authState.User.Identity.Name </p>
+    </div>
+    <div class="form-group">
+        <br />
+        <button type="submit" class="btn btn-success" >Create</button>
+    </div>
+</EditForm>
+
+@code {
+
+    private AuthenticationState authState;
+
+    public string userType = "";
+    private string email = "";
+    private UserCreateDTO user = new UserCreateDTO(); 
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await auth.GetAuthenticationStateAsync();
+
+        var claims = auth.GetAuthenticationStateAsync().Result.User.Claims; 
+        foreach(var claim in claims)
+        {
+            if(claim.Type.Equals("preferred_username")) email = claim.Value;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        email = authState.User.Identity.Name;
+        var userCreate = new UserCreateDTO{UserName = user.UserName, UserType = userType, 
+        Email = email};
+
+        var result = await Http.PostAsJsonAsync("https://localhost:7194/api/user", userCreate);
+        Console.WriteLine($"Created {result}"); 
+        Console.WriteLine("Success"); 
+    }
+}
