@@ -10,5 +10,7 @@
 
         Task<IReadOnlyCollection<UserDetailsDTO>> GetAllSupervisors(); 
 
+        Task<UserDetailsDTO> FindUserByEmail(string email);
+
     }
 

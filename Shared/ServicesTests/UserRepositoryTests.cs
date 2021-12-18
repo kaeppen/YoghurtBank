@@ -43,6 +43,22 @@ namespace ServicesTests
 
 
         [Fact]
+        public async Task FindUserByEmail_given_invalid_mail_returns_null()
+        {
+            var user = await _repository.FindUserByEmail("invalid@invalid.dk");
+            Assert.Null(user);
+        }
+
+        [Fact]
+        public async Task FindUserByEmail_given_valid_mail_returns_userdetailsdto()
+        {
+            var user = await _repository.FindUserByEmail("sofkj@itu.dk");
+            Assert.NotNull(user);
+            Assert.Equal("Sofia", user.UserName);
+            Assert.Equal("Student", user.UserType);
+        }
+
+        [Fact]
         public async Task FindUserByIdAsync_given_invalid_Id_returns_notFound_and_null()
         {
 

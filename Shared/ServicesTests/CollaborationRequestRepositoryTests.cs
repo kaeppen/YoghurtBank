@@ -182,6 +182,22 @@ namespace ServicesTests
         }
 
         [Fact]
+        public async Task FindTypeOfUser_given_SupervisorId_returns_true()
+        {
+            var supervisorId = 3;
+            var  result = await _repo.FindUserType(supervisorId);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task FindTypeOfUser_given_StudentId_returns_false()
+        {
+            var studentId = 1;
+            var  result = await _repo.FindUserType(studentId);
+            Assert.False(result);
+        }
+
+        [Fact]
         public async Task FindRequestsByStudentAsync_given_user1_returns_4_requests()
         {
             #region Arrange

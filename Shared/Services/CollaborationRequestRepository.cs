@@ -111,6 +111,19 @@
                 SupervisorId = entity.Requestee.Id
             };
         }
+        
+        public async Task<bool> FindUserType(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user.GetType() == typeof(Supervisor))
+            {
+                return true;
+            } else 
+            {
+                return false;
+            }
+        }
 
 
         public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsBySupervisorAsync(int supervisorId)

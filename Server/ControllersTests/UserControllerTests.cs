@@ -51,7 +51,7 @@ using Xunit;
             #endregion
 
             #region Act
-            var result = await _controller.Get(id);
+            var result = await _controller.GetById(id);
             #endregion
 
             #region Assert
@@ -69,7 +69,7 @@ using Xunit;
             #endregion
 
             #region Act
-            var result = await _controller.Get(id);
+            var result = await _controller.GetById(id);
             #endregion
 
             #region Assert
@@ -126,5 +126,28 @@ using Xunit;
 
             var result = await _controller.GetSupervisors();
             Assert.Equal(2, result.Count());
+        }
+
+
+        [Fact]
+        public async Task GetByEmail_given_valid_mail_returns_dto()
+        {
+            
+            _repoMock.Setup(m => m.FindUserByEmail("test@test.dk")).ReturnsAsync(new UserDetailsDTO());
+
+            var result = await _controller.GetByEmail("test@test.dk");
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task GetByEmail_given_invalid_mail_returns_null()
+        {
+            UserDetailsDTO? user = null;
+            _repoMock.Setup(m => m.FindUserByEmail("test@test.dk")).ReturnsAsync(user);
+
+            var result = await _controller.GetByEmail("test@test.dk");
+
+            Assert.Null(result);
         }
     }
