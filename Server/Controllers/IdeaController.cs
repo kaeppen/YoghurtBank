@@ -4,7 +4,7 @@
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class IdeaController : ControllerBase
     {
         private readonly ILogger<IdeaController> _logger;
@@ -27,6 +27,15 @@
             return await _repository.FindIdeaDetailsAsync(id);
             //hvordan fungerer dette? I rasmus' kode ser det ud som om at 
             //ideadetailsdto slet ikke bliver returneret??? hjælp mig :( 
+        }
+
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(IReadOnlyCollection<IdeaDetailsDTO>), StatusCodes.Status200OK)]
+        [HttpGet("user/{superid:int}")]
+        public async Task<IReadOnlyCollection<IdeaDetailsDTO>> GetBySuperId(int superid)
+        {
+            var ideas = await _repository.FindIdeasBySupervisorIdAsync(superid);
+            return ideas.list;
         }
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
