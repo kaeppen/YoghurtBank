@@ -1,0 +1,59 @@
+@page "/registerUser"
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using YoghurtBank.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+@inject NavigationManager NavMan
+@inject AuthenticationStateProvider auth
+
+<PageTitle>Register User</PageTitle>
+<h1>Register as a supervisor or student to use the projectbank</h1>
+
+<EditForm Model="@user" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="Name">Name</label>
+        <InputText id="The name which will be displayed to other users" readonly="readonly" placeholder="@user.UserName" @bind-Value="user.UserName" class="form-control" />
+    </div>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <InputText id="The mail which will be displayed to other users" readonly="readonly" placeholder="@user.Email" @bind-Value="user.Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <div>Type</div>
+        <InputRadioGroup @bind-Value="user.UserType">
+            <InputRadio id="Supervisor" Value="@typeof(Supervisor).Name" class="form-check-input" /><label class="form-check-label" for="Supervisor">Supervisor</label>
+            <InputRadio id="Student" Value="@typeof(Student).Name" class="form-check-input" /><label class="form-check-label" for="Student">Student</label>
+        </InputRadioGroup>
+    </div>
+    <div class="form-group">
+        <br />
+        <button type="submit" class="btn btn-success" >Create</button>
+    </div>
+</EditForm>
+
+@code {
+
+    private AuthenticationState authState;
+
+    private UserCreateDTO user = new UserCreateDTO(); 
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await auth.GetAuthenticationStateAsync();
+
+        user.Email = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user.UserName = authState.User.Claims.Where(c => c.Type.Equals("name")).Select(c => c.Value).FirstOrDefault();
+        var claims = auth.GetAuthenticationStateAsync().Result.User.Claims; 
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var result = await Http.PostAsJsonAsync("https://localhost:7095/api/user", user);
+    }
+}
