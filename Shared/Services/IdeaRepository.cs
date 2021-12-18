@@ -138,22 +138,22 @@
         {
             var supervisor = (Supervisor) _context.Users.Find(userId);
 
-            if (supervisor == null) 
-            {
+             if (supervisor == null) 
+             {
                 return (HttpStatusCode.NotFound, null);
-            } else 
-            {
-            var ideas = await _context.Ideas.Where(i => i.Creator.Id == userId).Select(i =>
-            new IdeaDetailsDTO {
-                Id = i.Id,
-                Title = i.Title,
-                Subject = i.Subject,
-                Type = i.Type
-            }).ToListAsync();
-            
-            return (HttpStatusCode.Accepted, ideas.AsReadOnly());
-            }
-            
+             } 
+             else 
+             {
+                var ideas = await _context.Ideas.Where(i => i.Creator.Id == userId).Select(i =>
+                new IdeaDetailsDTO {
+                    Id = i.Id,
+                    Title = i.Title,
+                    Subject = i.Subject,
+                    Type = i.Type
+                }).ToListAsync();
+
+                return (HttpStatusCode.Accepted, ideas.AsReadOnly());
+             }
         }
 
         public async Task<IReadOnlyCollection<IdeaDetailsDTO>> ReadAllAsync()
