@@ -44,7 +44,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        idea = await Http.GetFromJsonAsync<IdeaDetailsDTO>($"https://localhost:7194/api/idea/{ideaId}");
+        idea = await Http.GetFromJsonAsync<IdeaDetailsDTO>($"https://localhost:7095/api/idea/{ideaId}");
         await base.OnParametersSetAsync(); //is this necessary?
     }
 
