@@ -8,13 +8,10 @@
 @inject AuthenticationStateProvider auth
 
 <PageTitle>View My CollaborationRequest</PageTitle>
-<h1>View your Collaboration Request</h1>
-<h3>Press the button below!</h3>
+<h1>Your Collaboration Request</h1>
 
 <!--<div>
-    <InputNumber id="UserId" @bind-Value="users.Email" class="form-control" />
-
-    <button type="submit" @onclick="GetEmail" class="btn btn-success">Collaboration Request</button>
+    <button type="submit" @onclick="@(() => FindOrCreate())" class="btn btn-success">Requests</button>
 </div>-->
 
 @code {
@@ -42,7 +39,8 @@
         //var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value);
         Console.WriteLine(name);
         Console.WriteLine(mail);
-        FindOrCreate("HenningG@gmail.com");
+        //FindOrCreate("HenningG@gmail.com");
+        FindOrCreate(mail);
     }
 
     private void GetEmail() {
@@ -52,7 +50,7 @@
     
     private async Task<UserDetailsDTO> FindOrCreate(string email)
     {
-        var user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/user/mail/{email}");
+        var user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{email}");
         if(user != null)
         {
             //sæt et "requests" felt til at være user.requests 

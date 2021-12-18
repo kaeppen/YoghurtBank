@@ -48,7 +48,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7194/api/idea");
+        ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7095/api/idea");
     }
 
     private void RequestCollab()

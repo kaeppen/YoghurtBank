@@ -112,7 +112,6 @@
             };
         }
 
-
         public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsBySupervisorAsync(int supervisorId)
         {
             //overvej type checking, så vi er sikre på at metoden ikke bruges til at finde den forkerte type user
