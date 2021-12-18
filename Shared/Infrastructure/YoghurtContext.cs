@@ -10,5 +10,7 @@
         {
             modelBuilder.Entity<CollaborationRequest>().Property(c => c.Status)
                 .HasConversion(new EnumToStringConverter<CollaborationRequestStatus>());
+                
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
         }
     }
