@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  database:
+    container_name: "Yoghurtbase"
+    image: "postgres"
+    restart: always
+    environment:
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=W31kvh0HNZXAzafqOrbuXKxFiN4TY
+      #POSTGRES_USER: "dev"
+      #POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    ports:
+      - 5432:5432
+    secrets:
+      - db_password
+ 
+  server:
+    image: server
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      ConnectionStrings__Yoghurtbase:connectionString: 
+      ASPNETCORE_URLS: https://+;http://+
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+      ASPNETCORE_Kestrel__Certificates__Default__Password: localhost
+    ports:
+      - 5077:80
+      - 7207:443
+    depends_on:
+      - database
+    secrets:
+      - source: connection_string
+        target: ConnectionStrings__Yoghurtbase:connectionString
+    volumes:
+      - ../../../../.aspnet/https:/https/
+ 
+secrets:
+  db_password:
+    file: ../db_password.txt
+  connection_string:
+    file: ../connection_string.txt
