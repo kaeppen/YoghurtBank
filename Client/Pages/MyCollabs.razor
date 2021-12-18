@@ -33,15 +33,13 @@
         foreach(var claim in claims)
         {
             if(claim.Type.Equals("name")) name = claim.Value;
-            if(claim.Type.Equals("preferred_username")) name = claim.Value;
+            if(claim.Type.Equals("preferred_username")) mail = claim.Value;
         }
 
         //var name = authState.User.Claims.Where(c => c.Type.Equals("name")).Select(c => c.Value); 
         //var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value);
         Console.WriteLine(name);
         Console.WriteLine(mail);
-        
-
     }
 
     private void GetEmail() {
