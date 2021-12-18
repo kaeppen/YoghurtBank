@@ -20,15 +20,15 @@
     </div>
     <div class="form-group">
         <div>Type</div>
-        <InputRadioGroup>
-            <InputRadio id="Supervisor" @onclick="@(()=>userType='Supervisor')" class="form-check-input" />
-            <InputRadio id="Student" @onclick="@(()=>userType='Student')" class="form-check-input" />
-                @*<label class="form-check-label" for="Bachelor">@IdeaType.Bachelor</label> *@
+        <InputRadioGroup @bind-Value="user.UserType">
+            <InputRadio id="Supervisor" Value="@typeof(Supervisor).Name" class="form-check-input" /><label class="form-check-label" for="Supervisor">Supervisor</label>
+            <InputRadio id="Student" Value="@typeof(Student).Name" class="form-check-input" /><label class="form-check-label" for="Student">Student</label>
         </InputRadioGroup>
+        <h1>@user.UserType</h1>
     </div>
     <div class="form-group">
         <label for="Email">Please check that this is the correct email address before submitting</label>
-        <p> @authState.User.Identity.Name </p>
+        <p> @email </p>
     </div>
     <div class="form-group">
         <br />
@@ -40,7 +40,6 @@
 
     private AuthenticationState authState;
 
-    public string userType = "";
     private string email = "";
     private UserCreateDTO user = new UserCreateDTO(); 
 
@@ -48,20 +47,28 @@
     {
         authState = await auth.GetAuthenticationStateAsync();
 
+        email = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
         var claims = auth.GetAuthenticationStateAsync().Result.User.Claims; 
         foreach(var claim in claims)
         {
             if(claim.Type.Equals("preferred_username")) email = claim.Value;
         }
+        foreach(var claim in claims)
+        {
+            Console.WriteLine("Type"+claim.Type);
+            Console.WriteLine("Value"+claim.Value);
+            Console.WriteLine("Issuer"+claim.Issuer);
+            Console.WriteLine("Subject"+claim.Subject);
+        }
     }
 
     private async Task HandleValidSubmit()
     {
-        email = authState.User.Identity.Name;
-        var userCreate = new UserCreateDTO{UserName = user.UserName, UserType = userType, 
-        Email = email};
+        @* var userCreate = new UserCreateDTO{UserName = user.UserName, UserType = userType, 
+        Email = email}; *@
+        user.Email = email;
 
-        var result = await Http.PostAsJsonAsync("https://localhost:7194/api/user", userCreate);
+        var result = await Http.PostAsJsonAsync("https://localhost:7095/api/user", user);
         Console.WriteLine($"Created {result}"); 
         Console.WriteLine("Success"); 
     }
