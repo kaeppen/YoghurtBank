@@ -89,10 +89,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         authState = await auth.GetAuthenticationStateAsync();
+
         //find user
-        //var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
-        var mail = "Roboto@university.com";
-        //var mail = "Minmail@webspeed.dk";
+        var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
         user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
         
         //find users requests
@@ -108,11 +107,5 @@ else
     private void NavIdea(int ideaid)
     {
         NavMan.NavigateTo($"https://localhost:7095/ideadetails/{ideaid}");
-    }
-
-    //KUN HVIS COLLABDETAILS BLIVER EN TING? 
-    private void NavRequest(int requestid)
-    {
-        //NavMan.NavigateTo($"https://localhost:7095/ideadetails/{requestid}");
     }
 }
