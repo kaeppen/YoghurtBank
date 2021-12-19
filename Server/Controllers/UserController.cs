@@ -61,6 +61,7 @@
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IReadOnlyCollection<UserDetailsDTO>),StatusCodes.Status200OK)]
         [HttpGet]
+        [Route("/api/users")]
         public async Task<IReadOnlyCollection<UserDetailsDTO>> GetSupervisors()
         {
             return await _repository.GetAllSupervisors();
