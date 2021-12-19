@@ -22,6 +22,8 @@
     public record CollaborationRequestDetailsDTO
     {
         [Required]
+        public int Id {get; set;}
+        [Required]
         public int StudentId { get; set; }
 
         [Required]
