@@ -113,8 +113,8 @@ else
         {
             DateError = false;
             //chop off timestamps
-            end = end.Date; 
-            idea.StartDate = idea.StartDate.Date; 
+            end = end.Date.ToUniversalTime(); 
+            idea.StartDate = idea.StartDate.Date.ToUniversalTime(); 
             //calculate time to complete 
             idea.TimeToComplete = (end-idea.StartDate); 
             idea.Open = true; //bare sæt den som åben pr. default, eller? 
