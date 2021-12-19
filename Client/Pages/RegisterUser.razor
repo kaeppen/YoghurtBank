@@ -12,18 +12,17 @@
 <h1>Register as a supervisor or student to use the projectbank</h1>
 
 <EditForm Model="@user" OnValidSubmit="@HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
     <div class="form-group">
         <label for="Name">Name</label>
         <InputText id="The name which will be displayed to other users" readonly="readonly" placeholder="@user.UserName" @bind-Value="user.UserName" class="form-control" />
     </div>
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+
     <div class="form-group">
         <label for="Email">Email</label>
         <InputText id="The mail which will be displayed to other users" readonly="readonly" placeholder="@user.Email" @bind-Value="user.Email" class="form-control" />
     </div>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
     <div class="form-group">
         <div>Type</div>
         <InputRadioGroup @bind-Value="user.UserType">
@@ -35,9 +34,14 @@
         <br />
         <button type="submit" class="btn btn-success" >Create</button>
     </div>
+    <br>
+    <h4>@submitMessage</h4>
+
 </EditForm>
 
 @code {
+    private string submitMessage;
+    private bool submitSuccess; 
 
     private AuthenticationState authState;
 
@@ -54,6 +58,14 @@
 
     private async Task HandleValidSubmit()
     {
-        var result = await Http.PostAsJsonAsync("https://localhost:7095/api/user", user);
+        var result = await Http.PostAsJsonAsync("https://localhost:7095/api/users", user);
+        if(result.IsSuccessStatusCode)
+        {
+            submitMessage = "Registration succeeded!";
+        }
+        else
+        {
+            submitMessage = "You are already registered";
+        }
     }
 }
