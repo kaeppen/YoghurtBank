@@ -99,6 +99,7 @@
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(CollaborationRequestDetailsDTO), StatusCodes.Status200OK)]
         public async Task<CollaborationRequestDetailsDTO> Put(int id, [FromBody] CollaborationRequestUpdateDTO request)
         {
             //denne er ligesom delete, den følger ikke 100% rasmus' eksempel ift. IActionResult returtype og returnering af .ToActionResult

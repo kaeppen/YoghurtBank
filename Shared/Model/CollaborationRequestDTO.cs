@@ -17,6 +17,9 @@
     {
         public int Id { get; set; }
         public CollaborationRequestStatus Status { get; set; }
+
+        public bool Approving {get ; set;}
+        public int user {get; set;}
     }
 
     public record CollaborationRequestDetailsDTO
