@@ -25,9 +25,21 @@ else
 @if(ideas == null || ideas.Length == 0)
 {
     <h1>No ideas - get creatin'!</h1>
+    @if(IsSuper)
+    {
+        <div class="card-body">
+        <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
+        </div>
+    }
 }
 else 
 {
+    @if(IsSuper)
+    {
+        <div class="card-body">
+        <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
+        </div>
+    }
     foreach(var idea in ideas)
     {
         <div class="card" style="width: 18rem;">
@@ -58,6 +70,7 @@ else
     private IdeaDetailsDTO[]? ideas;
     private UserDetailsDTO? user;
     private AuthenticationState authState;
+    private bool IsSuper; 
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,19 +78,19 @@ else
 
         authState = await auth.GetAuthenticationStateAsync();
 
-        //find user
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
         user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
-    }
-
-    private void RequestCollab()
-    {
-        Console.WriteLine("Request collab");
+        if(user.UserType == "Supervisor") IsSuper = true;
     }
 
     private void Nav(int id)
     {
         NavMan.NavigateTo($"https://localhost:7095/ideadetails/{id}");
+    }
+
+    private void NavCreate()
+    {
+        NavMan.NavigateTo($"https://localhost:7095/createidea");
     }
     
 }

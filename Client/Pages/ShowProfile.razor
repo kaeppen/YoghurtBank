@@ -31,6 +31,9 @@ else
         <div class="col-sm">
 
         <h3>My ideas</h3>
+        <div class="card-body">
+        <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
+        </div>
         @foreach (var idea in ideas)
         {
         <div class="card-body">
@@ -105,6 +108,11 @@ else
         {
             ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7095/api/idea/user/{user.Id}");
         }
+    }
+
+    private void NavCreate()
+    {
+        NavMan.NavigateTo($"https://localhost:7095/createidea");
     }
 
     private void NavIdea(int ideaid)
