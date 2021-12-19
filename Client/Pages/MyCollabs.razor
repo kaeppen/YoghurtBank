@@ -7,6 +7,7 @@
 @inject NavigationManager NavMan
 @inject AuthenticationStateProvider auth
 
+
 <PageTitle>View My CollaborationRequest</PageTitle>
 <h1>Your collaboration request</h1>
 
@@ -19,32 +20,38 @@ else
 {
     foreach(var request in requests)
     {
-        <div class="card" style="width: 18rem;">
-        <div class="card-header">
-            <h3>Request</h3>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Requester: <br> @request.StudentId</h5>
-            <p class="card-text">Requested: <br> @request.SupervisorId</p>
-            <p class="card-text">Application: <br> @request.Application</p>
-            <p class="card-text">Status: <br> @request.Status</p>
-            
-        </div>
-        <div class="card-body">
-            @* <button type="button" class="btn btn-primary" style="background-color: green" @onclick="RequestCollab">Request collaboration</button> *@
-            @* <button type="button" class="btn btn-primary" @onclick="@(() => Nav(idea.Id))">Show details</button>  *@
-        </div>
-    </div>
+     <div class="card" style="width: 18rem;">
+                <div class="card-header">
+                    <h3>Request</h3>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Requester: <br> @request.StudentId</h5>
+                    <p class="card-text">Requested: <br> @request.SupervisorId</p>
+                    <p class="card-text">Application: <br> @request.Application</p>
+                    <p class="card-text">Status: <br> @request.Status</p>
+                    
+                </div>
+                <div class="card-body">
+                    <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green" @onclick="ApproveReq">Approve</button> 
+                    <button type="button" class="btn btn-secondary" style="background-color: red">Decline</button>  
+                </div>
+     </div>
     }
 }
 </div>
 
+<style>
+    #Approvebtn:focus {
+        background-color: #3a0647;
+    }
+</style>
 
 @code {
 
     private AuthenticationState authState;
 
-    private CollaborationRequestDetailsDTO[] requests;
+    private CollaborationRequestDetailsDTO[]? requests;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,28 +70,26 @@ else
 
         Console.WriteLine(name);
         Console.WriteLine(mail);
-        FindOrCreate("Minmail@webspeed.dk");
+
+        requests = await FindOrCreate("Minmail@webspeed.dk");
         //FindOrCreate(mail);
-    }
+    } 
 
-    private void GetEmail() {
-        Console.WriteLine(authState.User.Identity.Name);
+    private void ApproveReq()
+    {
+       
     }
-
     
     private async Task<CollaborationRequestDetailsDTO[]> FindOrCreate(string email)
     {
         var user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{email}");
         if(user != null)
         {
-            //sæt et "requests" felt til at være user.requests 
-            @* Console.WriteLine(user.UserName);
+           @*  Console.WriteLine(user.UserName);
             Console.WriteLine(user.Email);
-            Console.WriteLine(user.Id);*@
+            Console.WriteLine(user.Id); *@
 
-            requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
-
-            return requests; 
+            return await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
         }
         else
         {

@@ -45,7 +45,7 @@
         [Authorize]
         [HttpGet("{ideaid}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(typeof(CollaborationRequestDetailsDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IReadOnlyCollection<IdeaDetailsDTO>), StatusCodes.Status200OK)]
         public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> GetByIdeaId(int id)
         {
             var requests = await _repository.FindRequestsByIdeaAsync(id);
@@ -54,6 +54,7 @@
 
         [Authorize]
         [HttpGet("{userId}")]
+        [ProducesResponseType(typeof(IReadOnlyCollection<IdeaDetailsDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("/api/collaborationRequest/id/{userId}")]
         public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> GetRequestsByUser(int userId)
@@ -62,7 +63,6 @@
 
             if (isSupervisor)
             {
-                Console.WriteLine("i am");
                 return await _repository.FindRequestsBySupervisorAsync(userId);
             }
             else
@@ -99,8 +99,7 @@
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<CollaborationRequestDetailsDTO> Put(int id,
-            [FromBody] CollaborationRequestUpdateDTO request)
+        public async Task<CollaborationRequestDetailsDTO> Put(int id, [FromBody] CollaborationRequestUpdateDTO request)
         {
             //denne er ligesom delete, den følger ikke 100% rasmus' eksempel ift. IActionResult returtype og returnering af .ToActionResult
             return (await _repository.UpdateAsync(id, request));
