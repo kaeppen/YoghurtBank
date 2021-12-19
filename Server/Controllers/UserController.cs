@@ -31,7 +31,7 @@
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(UserDetailsDTO), StatusCodes.Status200OK)]
         [HttpGet("{id}")]
-        [Route("/api/users/{id}")]
+        [Route("/api/users/id/{id}")]
         public async Task<UserDetailsDTO> GetById(int id) 
         {
             return await _repository.FindUserByIdAsync(id);
