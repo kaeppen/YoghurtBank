@@ -33,6 +33,7 @@
 
             return new CollaborationRequestDetailsDTO
             {
+                Id = entity.Id,
                 StudentId = entity.Requester.Id,
                 SupervisorId = entity.Requestee.Id,
                 Status = entity.Status,
@@ -54,6 +55,7 @@
             
             return new CollaborationRequestDetailsDTO
             {
+                Id = collabRequest.Id,
                 StudentId = _context.Users.FindAsync(collabRequest.Id).Result.Id,
                 SupervisorId = _context.Users.FindAsync(collabRequest.Id).Result.Id,
                 Status = collabRequest.Status,
@@ -80,6 +82,7 @@
             //husk null-checking på c.idea 
             var requests = await _context.CollaborationRequests.Where(c => c.Idea.Id == ideaId).Select(c => new CollaborationRequestDetailsDTO
             {
+                Id = c.Id,
                 StudentId = c.Requester.Id,
                 SupervisorId = c.Requestee.Id,
                 Application = c.Application,
@@ -94,17 +97,25 @@
         public async Task<CollaborationRequestDetailsDTO> UpdateAsync(int id, CollaborationRequestUpdateDTO updateRequest)
         {
             //TODO should more properties be update-able? 
+
+            Console.WriteLine("Blenis!");
             
-            var entity = await _context.CollaborationRequests.FindAsync(id);
+            //var entity = await _context.CollaborationRequests.FindAsync(id);
+
+            var entity = await _context.CollaborationRequests.Where(c => c.Id == id).Include(c => c.Requester).Include(c => c.Requestee).FirstOrDefaultAsync();
+
             if (entity == null)
             {
+                Console.WriteLine("ID: " + id);
+                Console.WriteLine("Ingen Blenis!");
                 return null;  //RETURN A STATUS INSTEAD
             }
-
             entity.Status = updateRequest.Status;
             await _context.SaveChangesAsync();
+
             return new CollaborationRequestDetailsDTO
             {
+                Id = entity.Id,
                 Status = entity.Status,
                 Application = entity.Application,
                 StudentId = entity.Requester.Id,
@@ -132,6 +143,7 @@
             
             var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requestee.Id == supervisorId).Select(c => new CollaborationRequestDetailsDTO
             {
+                Id = c.Id,
                 StudentId = c.Requester.Id,
                 SupervisorId = c.Requestee.Id,
                 Application = c.Application,
@@ -147,6 +159,7 @@
 
             var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requester.Id == studentId).Select(c => new CollaborationRequestDetailsDTO
             {
+                Id = c.Id,
                 StudentId = c.Requester.Id,
                 SupervisorId = c.Requestee.Id,
                 Application = c.Application,
