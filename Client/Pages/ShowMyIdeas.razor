@@ -5,8 +5,22 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using YoghurtBank.Shared
+@inject AuthenticationStateProvider auth
 @attribute [Authorize]
 @inject HttpClient Http
+
+@if (user == null || user.UserType == "Student")
+{
+    <p><em>You have to be registrated as a supervisor to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+
+}
+else
+{
+    if(user.UserType == "Supervisor")
+{
 
 <PageTitle>My ideas</PageTitle>
 
@@ -41,19 +55,34 @@ else
     }
 }
 </div>
-
+}
+}
 
 @code {
     [Parameter]
     public int? superid {get; set;}
     private IdeaDetailsDTO[]? ideas;
-
+    private UserDetailsDTO? user;
+    private AuthenticationState authState;
 
 
     protected override async Task OnInitializedAsync()
     {
         ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7095/api/idea/user/{superid}");
+
+        authState = await auth.GetAuthenticationStateAsync();
+
+        //find user
+        var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+        
+        //find users ideas if super
+        if(user.UserType == "Supervisor")
+        {
+            ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7095/api/idea/user/{user.Id}");
+        }
     }
+
 
 
     private void Nav(int id)

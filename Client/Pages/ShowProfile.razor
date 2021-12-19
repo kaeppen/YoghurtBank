@@ -12,7 +12,10 @@
 
 @if (user == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
 }
 else
 {
