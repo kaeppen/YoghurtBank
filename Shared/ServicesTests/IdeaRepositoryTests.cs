@@ -13,8 +13,8 @@ namespace YoghurtBank.ServicesTests
     {
         private readonly YoghurtContext _context;
         private readonly IdeaRepository _repo;
-        private DateTime _now;
-        private DateTime _today;
+        private readonly DateTime _now;
+        private readonly DateTime _today;
 
         public IdeaRepositoryTests()
         {
@@ -30,11 +30,48 @@ namespace YoghurtBank.ServicesTests
             var supervisor1 = new Supervisor { Id = 1, UserName = "Torben", CollaborationRequests = new List<CollaborationRequest>(), Ideas = new List<Idea>(), Email = "torben@toben.dk" };
             var supervisor2 = new Supervisor { Id = 2, UserName = "Preben", CollaborationRequests = new List<CollaborationRequest>(), Ideas = new List<Idea>(), Email = "preben@test.dk" };
 
-            var idea1 = new Idea { Id = 1, Creator = supervisor2, Posted = _now, Subject = "Big Data", Title = "Big data is good", Description = "Big data gives value", AmountOfCollaborators = 3, Open = true, TimeToComplete = _today - _today, StartDate = _now, Type = IdeaType.Bachelor };
-            var idea2 = new Idea { Id = 2, Creator = supervisor1, Posted = _now, Subject = "Data Intelligence", Title = "Data Intelligence is good", Description = "Data Intelligence gives value", AmountOfCollaborators = 1, Open = true, TimeToComplete = _today - _today, StartDate = _now, Type = IdeaType.PhD };
-            var idea3 = new Idea { Id = 3, Creator = supervisor2, Posted = _now, Subject = "DevOps", Title = "DevOps is good", Description = "DevOps gives value", AmountOfCollaborators = 2, Open = true, TimeToComplete = _today - _today, StartDate = _now, Type = IdeaType.Project };
-            var idea4 = new Idea { Id = 4, Creator = supervisor1, Posted = _now, Subject = "Requirements Elicitation", Title = "Requirements Elicitation is good", Description = "Requirements Elicitation gives value", AmountOfCollaborators = 5, Open = true, TimeToComplete = _today - _today, StartDate = _now, Type = IdeaType.Masters };
-            //DateTime.Now-DateTime.Today
+            var idea1 = new Idea {Id = 1, 
+                            Creator = supervisor2, 
+                            Posted = _now, Subject = "Big Data",   
+                            Title = "Big data is good", 
+                            Description = "Big data gives value", 
+                            AmountOfCollaborators = 3, 
+                            Open = true, 
+                            TimeToComplete = _today - _today, 
+                            StartDate = _now, 
+                            Type = IdeaType.Bachelor };
+            var idea2 = new Idea { Id = 2, 
+                            Creator = supervisor1, 
+                            Posted = _now, 
+                            Subject = "Data Intelligence", 
+                            Title = "Data Intelligence is good", 
+                            Description = "Data Intelligence gives value", 
+                            AmountOfCollaborators = 1, 
+                            Open = true, 
+                            TimeToComplete = _today - _today, 
+                            StartDate = _now, 
+                            Type = IdeaType.PhD };
+            var idea3 = new Idea { Id = 3, 
+                            Creator = supervisor2, 
+                            Posted = _now, Subject = "DevOps", 
+                            Title = "DevOps is good", 
+                            Description = "DevOps gives value", 
+                            AmountOfCollaborators = 2, 
+                            Open = true, 
+                            TimeToComplete = _today - _today, 
+                            StartDate = _now, 
+                            Type = IdeaType.Project };
+            var idea4 = new Idea { Id = 4, 
+                            Creator = supervisor1, 
+                            Posted = _now, 
+                            Subject = "Requirements Elicitation", 
+                            Title = "Requirements Elicitation is good", 
+                            Description = "Requirements Elicitation gives value",
+                            AmountOfCollaborators = 5, 
+                            Open = true, 
+                            TimeToComplete = _today - _today, 
+                            StartDate = _now, 
+                            Type = IdeaType.Masters };
 
             supervisor1.Ideas.Add(idea2);
             supervisor1.Ideas.Add(idea4);
@@ -47,7 +84,6 @@ namespace YoghurtBank.ServicesTests
             context.SaveChanges();
             _context = context;
             _repo = new IdeaRepository(_context);
-
         }
 
         [Fact]
@@ -70,7 +106,7 @@ namespace YoghurtBank.ServicesTests
             Assert.Equal(3, result.AmountOfCollaborators);
             Assert.Equal(2, result.CreatorId);
             Assert.True(result.Open);
-            //datetime properties also?
+            Assert.Equal(_now, result.StartDate);
             #endregion
         }
 
@@ -86,7 +122,6 @@ namespace YoghurtBank.ServicesTests
             #endregion
 
             #region Assert
-            //needs to be changed when return value of method is changed
             Assert.Null(result);
             #endregion
 
@@ -128,9 +163,7 @@ namespace YoghurtBank.ServicesTests
         {
             #region Arrange
             var id = 1;
-            //get intital 
             var entity = await _context.Ideas.FindAsync(id);
-
             var update = new IdeaUpdateDTO
             {
                 Title = "NewTitle",
@@ -143,11 +176,9 @@ namespace YoghurtBank.ServicesTests
 
             #region Act
             var result = await _repo.UpdateAsync(id, update);
-            //get the actual entity to verify the updates
-
             var updatedEntity = await _context.Ideas.FindAsync(id);
-
             #endregion
+
             #region Assert
             Assert.NotNull(result);
             Assert.Equal("NewTitle", result.Title);
@@ -155,8 +186,6 @@ namespace YoghurtBank.ServicesTests
             Assert.Equal("NewDescription", result.Description);
             Assert.Equal(400, result.AmountOfCollaborators);
             Assert.False(result.Open);
-
-
             Assert.NotNull(updatedEntity);
             Assert.Equal("NewTitle", updatedEntity.Title);
             Assert.Equal("NewSubject", updatedEntity.Subject);
@@ -173,7 +202,6 @@ namespace YoghurtBank.ServicesTests
         public async Task UpdateAsync_given_nonexisting_entity_returns_null()
         {
             var id = 666;
-            
             var update = new IdeaUpdateDTO
             {
                 Title = "NewTitle",
@@ -212,7 +240,14 @@ namespace YoghurtBank.ServicesTests
 
             #region Assert
             Assert.NotNull(result);
-            //needs more assertions
+            Assert.Equal(2, result.CreatorId);
+            Assert.Equal("GADDAG's and their use in ScrabbleBots", result.Title);
+            Assert.Equal("Scrabble", result.Subject);
+            Assert.Equal("Heya Sweden", result.Description);
+            Assert.Equal(2, result.AmountOfCollaborators);
+            Assert.True(result.Open);
+            Assert.Equal(_now, result.StartDate);
+            Assert.Equal(IdeaType.Bachelor, result.Type);
             #endregion
         }
 
@@ -262,12 +297,10 @@ namespace YoghurtBank.ServicesTests
             );
         }
 
-        //Todo fix broken test - Timespan is off (precision)
         [Fact]
         public async Task ReadAllAsync_returns_all_elements_in_context()
         {
             var ideas = await _repo.ReadAllAsync();
-
 
             var supervisor1 = _context.Users.Find(1);
             var supervisor2 = _context.Users.Find(2);
@@ -348,14 +381,12 @@ namespace YoghurtBank.ServicesTests
                 {
                     _context.Dispose();
                 }
-
                 disposed = true;
             }
         }
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

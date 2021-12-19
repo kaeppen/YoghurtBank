@@ -17,7 +17,6 @@ namespace ServicesTests
         public CollaborationRequestRepositoryTests()
         {
             #region Setup
-
             var connection = new SqliteConnection("Filename=:memory:");
             connection.Open();
             var builder = new DbContextOptionsBuilder<YoghurtContext>();
@@ -51,7 +50,6 @@ namespace ServicesTests
                 Email = "test@test.dk"
             };
 
-
             var Idea1 = new Idea
             {
                 Id = 1,
@@ -81,7 +79,6 @@ namespace ServicesTests
                 TimeToComplete = DateTime.Now - DateTime.Today,
                 Type = IdeaType.Project
             };
-
 
             var collabRequest1 = new CollaborationRequest
             {
@@ -123,7 +120,6 @@ namespace ServicesTests
                 Idea = Idea2
             };
 
-
             context.Users.Add(student1);
             context.Users.Add(super1);
             context.Users.Add(super2);
@@ -153,7 +149,7 @@ namespace ServicesTests
 
             #region Assert
             Assert.NotNull(result);
-            Assert.Equal(3, result.Count());
+            Assert.Equal(3, result.Count);
             Assert.Equal("Yes", result.ElementAt(0).Application);
             Assert.Equal("No", result.ElementAt(1).Application);
             Assert.Equal("Yes", result.ElementAt(2).Application);
@@ -210,7 +206,8 @@ namespace ServicesTests
 
             #region Assert
             Assert.NotNull(result);
-            Assert.Equal(4, result.Count());
+            Assert.Equal(4, result.Count);
+            //
             #endregion
         }
 
@@ -218,7 +215,6 @@ namespace ServicesTests
         public async Task CreateAsync_given_request_returns_it()
         {
             #region Arrange
-
             var collabrequest = new CollaborationRequestCreateDTO
             {
                 StudentId = 1,
@@ -226,19 +222,17 @@ namespace ServicesTests
                 Application = "Heya",
                 IdeaId = 1
             };
-
             #endregion
 
             #region Act
-
             var created = await _repo.CreateAsync(collabrequest);
-
             #endregion
 
             #region Assert
-
             Assert.Equal("Heya", created.Application);
-
+            Assert.Equal(1, created. StudentId);
+            Assert.Equal(2, created.SupervisorId);
+            Assert.Equal(CollaborationRequestStatus.Waiting, created.Status);
             #endregion
         }
         
@@ -256,7 +250,6 @@ namespace ServicesTests
             var created = await _repo.CreateAsync(cb1);
             
             Assert.Null(created);
-
         }
         
         [Fact]
@@ -273,7 +266,6 @@ namespace ServicesTests
             var created = await _repo.CreateAsync(cb1);
             
             Assert.Null(created);
-
         }
 
         [Fact]
@@ -284,18 +276,14 @@ namespace ServicesTests
             #endregion
 
             #region Act
-
             var result = await _repo.FindById(1);
-
             #endregion
 
             #region Assert
-
             Assert.Equal(1, result.StudentId);
             Assert.Equal(1, result.SupervisorId);
             Assert.Equal(CollaborationRequestStatus.Waiting, result.Status);
             Assert.Equal("Yes", result.Application);
-
             #endregion
         }
 
@@ -307,15 +295,11 @@ namespace ServicesTests
             #endregion
 
             #region Act
-
             var result = _repo.FindById(1337).Result;
-
             #endregion
 
             #region Assert
-
             Assert.Null(result);
-
             #endregion
         }
 
@@ -323,53 +307,19 @@ namespace ServicesTests
         public async Task FindRequestsByIdeaAsync_given_id_1_returns_two_requests()
         {
             #region Arrange
-
             #endregion
 
             #region Act
-
             var requests = await _repo.FindRequestsByIdeaAsync(1);
-
             #endregion
 
             #region Assert
-
             Assert.NotEmpty(requests);
-            Assert.Equal(2, requests.Count());
+            Assert.Equal(2, requests.Count);
             Assert.Equal("Yes", requests.ElementAt(0).Application);
+            Assert.Equal(CollaborationRequestStatus.Waiting, requests.ElementAt(0).Status);
             Assert.Equal("No", requests.ElementAt(1).Application);
-
-            #endregion
-        }
-
-        
-        //ER DENNE IKKE DUBLET AF EN ANDEN? 
-        [Fact]
-        public async Task AddAsync_given_collabrequest_returns_collabrequest()
-        {
-            #region Arrange
-
-            var collabrequest = new CollaborationRequestCreateDTO
-            {
-                StudentId = 1,
-                SupervisorId = 2,
-                Application = "Heya",
-                IdeaId = 1
-            };
-
-            #endregion
-
-            #region Act
-
-            var result = await _repo.CreateAsync(collabrequest);
-
-            #endregion
-
-            #region Assert
-
-            Assert.NotNull(result);
-            Assert.Equal("Heya", result.Application);
-
+            Assert.Equal(CollaborationRequestStatus.ApprovedBySupervisor, requests.ElementAt(1).Status);
             #endregion
         }
 
@@ -399,37 +349,30 @@ namespace ServicesTests
         [Fact]
         public async Task UpdateAsync_given_existing_request_updates_it()
         {
-            //get initial status
+            #region Assert
             var status = _context.CollaborationRequests.Find(1).Status;
-
-
             var update = new CollaborationRequestUpdateDTO
             {
                 Id = 1,
                 Status = CollaborationRequestStatus.ApprovedByStudent
             };
+            #endregion
 
             #region Act
-
             var result = await _repo.UpdateAsync(update.Id, update);
-
             #endregion
 
             #region Assert
-
             Assert.Equal(CollaborationRequestStatus.Waiting, status);
             Assert.NotNull(result);
             Assert.Equal(CollaborationRequestStatus.ApprovedByStudent, result.Status);
-
             #endregion
         }
 
-        //TODO change this when return value of method is not null but instead is a status
         [Fact]
         public async Task UpdateAsync_given_non_existing_id_returns_null()
         {
             #region Arrange
-
             var id = 500;
             var update = new CollaborationRequestUpdateDTO
             {
@@ -439,7 +382,6 @@ namespace ServicesTests
             #endregion
 
             #region Act
-
             var result = await _repo.UpdateAsync(500, update);
             var entity = await _context.CollaborationRequests.FindAsync(500);
             #endregion
@@ -452,7 +394,6 @@ namespace ServicesTests
 
 
         #region DisposeStuff
-
         private bool disposed;
 
         protected virtual void Dispose(bool disposing)
@@ -470,11 +411,9 @@ namespace ServicesTests
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-
         #endregion
     }
 }
