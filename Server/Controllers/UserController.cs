@@ -5,7 +5,7 @@
     [ApiController]
     //[Route("api/[controller]")]
     [Route("api/users")]
-    //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
@@ -19,10 +19,11 @@
         }
 
         [ProducesResponseType(typeof(UserDetailsDTO), StatusCodes.Status201Created)]
-        //[ProducesResponseType(typeof(UserDetailsDTO), StatusCodes.)] - tilføj statuscode såfremt user ikke skabes
+        //[ProducesResponseType(typeof(UserDetailsDTO), StatusCodes.Sta)] 
         [HttpPost]
         public async Task<UserDetailsDTO> Post(UserCreateDTO user)
         {
+            Console.WriteLine("Controlleren bliver ringet op");
             return await _repository.CreateAsync(user);
             
         }
@@ -47,7 +48,6 @@
         }
 
         
-        [AllowAnonymous] //overrides the authorize annotation, used bcuz the other stuff doesn't work 
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -57,7 +57,6 @@
             return await _repository.DeleteAsync(id);
         }
 
-        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(IReadOnlyCollection<UserDetailsDTO>),StatusCodes.Status200OK)]
         [HttpGet]
