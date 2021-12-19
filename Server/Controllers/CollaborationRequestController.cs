@@ -80,7 +80,7 @@
         {
             var created = await _repository.CreateAsync(request);
 
-            //det skal være created.Id og ikke application, men DTO har ikke id pt... 
+            //det skal være created.Id og ikke application, men DTO har ikke id pt... '
             return CreatedAtAction(nameof(Get), new { created.Application }, created);
         }
 
