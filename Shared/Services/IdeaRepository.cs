@@ -36,8 +36,9 @@
                 StartDate = idea.StartDate, 
                 Type = idea.Type
             };
-
-            sup.Ideas.Add(entity);
+            
+            //nye ideer tilføjes ikke til sups liste af ideer - relateret til måde (lazy) at hente sup ud på.
+            //sup.Ideas.Add(entity);
             _context.Ideas.Add(entity);
             await _context.SaveChangesAsync();
 

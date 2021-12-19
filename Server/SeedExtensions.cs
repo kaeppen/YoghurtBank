@@ -180,25 +180,34 @@ using YoghurtBank.Shared;
                 Idea = Idea3
             };
 
+                student1.CollaborationRequests.Add(collabRequest1);
+                super1.CollaborationRequests.Add(collabRequest1);
+                student1.CollaborationRequests.Add(collabRequest2);
+                super1.CollaborationRequests.Add(collabRequest2);
+                student1.CollaborationRequests.Add(collabRequest3);
+                super2.CollaborationRequests.Add(collabRequest3);
+                student2.CollaborationRequests.Add(collabRequest4);
+                super2.CollaborationRequests.Add(collabRequest4);
+                student2.CollaborationRequests.Add(collabRequest5);
+                super1.CollaborationRequests.Add(collabRequest5);
+                student1.CollaborationRequests.Add(collabRequest6);
+                super1.CollaborationRequests.Add(collabRequest6);
+                super1.Ideas.Add(Idea1);
+                super2.Ideas.Add(Idea2);
+                super1.Ideas.Add(Idea3);
+                super2.Ideas.Add(Idea4);
+                super2.Ideas.Add(Idea5);
+
+          
+
             if (!await context.Users.AnyAsync() && !await context.Ideas.AnyAsync() && !await context.CollaborationRequests.AnyAsync())
-            {
+            {   
 
                 context.Users.Add(student1);
                 context.Users.Add(student2);
                 context.Users.Add(student3);
                 context.Users.Add(super1);
                 context.Users.Add(super2);
-                context.Ideas.Add(Idea1);
-                context.Ideas.Add(Idea2);
-                context.Ideas.Add(Idea3);
-                context.Ideas.Add(Idea4);
-                context.Ideas.Add(Idea5);
-                context.CollaborationRequests.Add(collabRequest1);
-                context.CollaborationRequests.Add(collabRequest2);
-                context.CollaborationRequests.Add(collabRequest3);
-                context.CollaborationRequests.Add(collabRequest4);
-                context.CollaborationRequests.Add(collabRequest5);
-                context.CollaborationRequests.Add(collabRequest6); 
                 await context.SaveChangesAsync();
             }
         }

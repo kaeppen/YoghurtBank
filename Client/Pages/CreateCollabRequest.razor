@@ -85,7 +85,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        supervisors = await Http.GetFromJsonAsync<UserDetailsDTO[]>("https://localhost:7194/api/user");
+        supervisors = await Http.GetFromJsonAsync<UserDetailsDTO[]>("https://localhost:7095/api/users");
 
     }
 
