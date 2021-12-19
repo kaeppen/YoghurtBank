@@ -9,19 +9,23 @@
         }
         public async Task<IdeaDetailsDTO> CreateAsync(IdeaCreateDTO idea)
         {
-            var sup = (Supervisor) await _context.Users.FindAsync(idea.CreatorId);
-            //var sup = (Supervisor) await _context.Users.Where(u => u.Id == idea.CreatorId).FirstOrDefault();
+            //man kan ikke finde en supervisors ideas frem... Der mangler noget i tabellen? For man kan ikke include u.ideas, for det er jo ikke en 
+            //supervisor man finder frem men blot en user. 
+            //var sup = (Supervisor) await _context.Users.Where(u => u.Id == idea.CreatorId).Include(u => u.).FirstOrDefaultAsync();
             //List<Idea> ideas = await _context.Ideas.Where(i => i.Creator.Id == sup.Id).Select(i => i).ToListAsync();
-            if(sup == null)
-            {
-                Environment.Exit(1);
-                //hvad fanden skal der ske brødre??? -> på en eller anden måde skal vi indikere at der skete en fejl
-            }
-            if(sup.Ideas == null)
-            {
-                Console.WriteLine("NEJ!!!");
-                //Environment.Exit(1);
-            }
+
+            var sup = (Supervisor) await _context.Users.FindAsync(idea.CreatorId);
+            
+            // if(sup == null)
+            // {
+            //     Environment.Exit(1);
+            //     //hvad fanden skal der ske brødre??? -> på en eller anden måde skal vi indikere at der skete en fejl
+            // }
+            // if(sup.Ideas == null)
+            // {
+            //     Console.WriteLine("NEJ!!!");
+            //     //Environment.Exit(1);
+            // }
 
             //husk noget null-checking 
             var entity = new Idea
@@ -34,11 +38,11 @@
                 Open = idea.Open,
                 TimeToComplete = idea.TimeToComplete,
                 StartDate = idea.StartDate, 
-                Type = idea.Type
+                Type = idea.Type,
+                Posted = DateTime.UtcNow.Date
             };
             
-            //nye ideer tilføjes ikke til sups liste af ideer - relateret til måde (lazy) at hente sup ud på.
-            //sup.Ideas.Add(entity);
+            //sup.Ideas.Add(entity); -> læs de øverste linjer! 
             _context.Ideas.Add(entity);
             await _context.SaveChangesAsync();
 
