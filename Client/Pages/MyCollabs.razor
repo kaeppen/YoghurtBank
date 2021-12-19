@@ -25,11 +25,13 @@ else
                     <h3>Request</h3>
                 </div>
 
+
                 <div class="card-body" style="background-color: @Background;">
                     <h5 class="card-title">Requester: <br> @request.StudentId</h5>
                     <p class="card-text">Requested: <br> @request.SupervisorId</p>
                     <p class="card-text">Application: <br> @request.Application</p>
                     <p class="card-text">Status: <br> @request.Status</p>
+
                 </div>
 
 @if(Student) {
@@ -47,18 +49,25 @@ else
                     <button type="button" class="btn btn-secondary" style="background-color: red" @onclick="(() => DeclineReq(request))">Decline</button>  
                 </div>
 }
+
      </div>
     }
 }
 
 </div>
 
+<style>
+    #Approvebtn:focus {
+        background-color: #3a0647;
+    }
+</style>
 
 @code {
 
     private AuthenticationState authState;
 
     private CollaborationRequestDetailsDTO[]? requests;
+
 
 
     private string Background {get; set;} = "yellow";
@@ -83,6 +92,7 @@ else
 
         Console.WriteLine(name);
         Console.WriteLine(mail);
+
 
 
         requests = await FindOrCreate("Roboto@university.com");
@@ -138,7 +148,6 @@ else
 
 
             Student = user.UserType.Equals("Student"); 
-           
             return await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
         }
         else
