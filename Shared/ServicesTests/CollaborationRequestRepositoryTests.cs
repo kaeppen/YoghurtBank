@@ -17,7 +17,6 @@ namespace ServicesTests
         public CollaborationRequestRepositoryTests()
         {
             #region Setup
-
             var connection = new SqliteConnection("Filename=:memory:");
             connection.Open();
             var builder = new DbContextOptionsBuilder<YoghurtContext>();
@@ -412,7 +411,6 @@ namespace ServicesTests
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
