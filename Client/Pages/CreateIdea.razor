@@ -61,7 +61,6 @@
         <br />
         <button type="submit" class="btn btn-success" >Create</button>
         <button type="reset" class="btn btn-secondary">Reset</button>
-        <button type="button" class="btn btn-primary" @onclick="Back">Back</button>
     </div>
     
     
@@ -89,7 +88,6 @@
         {
             idea.CreatorId = user.Id;
             idea.StartDate = DateTime.UtcNow;
-
         }
         else 
         {
@@ -125,10 +123,5 @@
         Console.WriteLine("Success");
 
            
-    }
-
-    private void Back()
-    {
-        //find a way to go back :) or delete the button all together
     }
 }
