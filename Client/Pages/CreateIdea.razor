@@ -7,6 +7,8 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavMan
+@inject AuthenticationStateProvider auth
+
 
 <PageTitle>Create Idea</PageTitle>
 <h1>Register your idea for a project!</h1>
@@ -71,15 +73,28 @@
 
 
 @code {
+    private UserDetailsDTO? user;
+    private AuthenticationState authState;
     private bool DateError = false;
-    private IdeaCreateDTO idea = new IdeaCreateDTO{CreatorId = 4}; //creatorid hardcoded while we figure out how to differentiate users
+    private IdeaCreateDTO idea = new IdeaCreateDTO{};
     private DateTime end  {get; set;} = DateTime.UtcNow;
-    public DateTime DefaultValue {get; set;} = DateTime.UtcNow;
     public string DateErrorMessage {get; set;}
 
     protected override async Task OnInitializedAsync()
     {
-        idea.StartDate = DefaultValue; 
+        authState = await auth.GetAuthenticationStateAsync();
+        var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+        if(user.UserType == "Supervisor")
+        {
+            idea.CreatorId = user.Id;
+            idea.StartDate = DateTime.UtcNow;
+
+        }
+        else 
+        {
+            Console.WriteLine("baaah youre a student - piss off");
+        }
     }
 
     private async Task HandleValidSubmit()
@@ -98,9 +113,11 @@
         else 
         {
             DateError = false;
-            //bad cast        
-            TimeSpan time = end-idea.StartDate;
-            idea.TimeToComplete = (TimeSpan) (end-idea.StartDate); 
+            //chop off timestamps
+            end = end.Date; 
+            idea.StartDate = idea.StartDate.Date; 
+            //calculate time to complete 
+            idea.TimeToComplete = (end-idea.StartDate); 
             idea.Open = true; //bare sæt den som åben pr. default, eller? 
             var result = await Http.PostAsJsonAsync("https://localhost:7095/api/idea", idea);
             Console.WriteLine($"Created {result}"); 
