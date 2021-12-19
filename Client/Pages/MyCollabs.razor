@@ -8,6 +8,16 @@
 @inject AuthenticationStateProvider auth
 
 
+@if (user == null)
+{
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+}
+else
+{
+
 <PageTitle>View My CollaborationRequest</PageTitle>
 <h1>Your collaboration request</h1>
 
@@ -58,32 +68,31 @@ else
 }
 
 </div>
-
-<style>
-    #Approvebtn:focus {
-        background-color: #3a0647;
-    }
-</style>
+}
 
 @code {
 
-    private AuthenticationState authState;
+    private UserDetailsDTO? user;
 
     private CollaborationRequestDetailsDTO[]? requests;
-
-
 
     private string Background {get; set;} = "yellow";
 
     private bool Student {get; set; } = false;
+
+    private AuthenticationState authState;
 
 
     protected override async Task OnInitializedAsync()
     {
         authState = await auth.GetAuthenticationStateAsync();
 
+        //find user 
+        var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+
         var name = "";
-        var mail = "";
+        mail = "";
         var claims = auth.GetAuthenticationStateAsync().Result.User.Claims; 
         foreach(var claim in claims)
         {
@@ -101,17 +110,8 @@ else
         //Lol@Blenis.dk
 
         mail = "Lol@Blenis.dk";
-        
-        var user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
-        if(user == null)
-        {
-            
-            RedirectUser();
-        }
+    
         requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
-        Console.WriteLine("I am not null");
-
-
 
     } 
 
@@ -178,12 +178,6 @@ else
 
         await OnInitializedAsync();
 
-    }
-  
-    
-    public void RedirectUser()
-    {
-        NavMan.NavigateTo($"https://localhost:7095/registerUser");
     }
 
 }
