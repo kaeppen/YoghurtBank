@@ -15,7 +15,16 @@
 <p>You register a new idea by filling out the input form below</p>
 
 
-<EditForm Model="@idea" OnValidSubmit="@HandleValidSubmit">
+@if(isStudent)
+{
+    <h1>Students cannot post ideas</h1>
+      <div class="form-group">
+        <button type="button" class="btn btn-primary" @onclick="Nav">Browse ideas</button>
+    </div>
+}
+else 
+{
+    <EditForm Model="@idea" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="form-group">
@@ -62,14 +71,8 @@
         <button type="submit" class="btn btn-success" >Create</button>
         <button type="reset" class="btn btn-secondary">Reset</button>
     </div>
-    
-    
-
-</EditForm>
-
-
-
-
+    </EditForm>
+}
 
 @code {
     private UserDetailsDTO? user;
@@ -78,6 +81,7 @@
     private IdeaCreateDTO idea = new IdeaCreateDTO{};
     private DateTime end  {get; set;} = DateTime.UtcNow;
     public string DateErrorMessage {get; set;}
+    private bool isStudent = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,12 +90,9 @@
         user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
         if(user.UserType == "Supervisor")
         {
+            isStudent = false;
             idea.CreatorId = user.Id;
             idea.StartDate = DateTime.UtcNow;
-        }
-        else 
-        {
-            Console.WriteLine("baaah youre a student - piss off");
         }
     }
 
@@ -118,10 +119,11 @@
             idea.TimeToComplete = (end-idea.StartDate); 
             idea.Open = true; //bare sæt den som åben pr. default, eller? 
             var result = await Http.PostAsJsonAsync("https://localhost:7095/api/idea", idea);
-            Console.WriteLine($"Created {result}"); 
         }
-        Console.WriteLine("Success");
-
-           
+    }
+    
+    private void Nav()
+    {
+        NavMan.NavigateTo($"https://localhost:7095/ideas");
     }
 }
