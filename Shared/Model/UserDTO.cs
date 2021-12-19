@@ -18,6 +18,7 @@
     {
         [StringLength(50)]
         public string UserName { get; set; }
+        [Required]
         public string UserType { get; set; }
         [EmailAddress]
         [DataType(DataType.EmailAddress)]
