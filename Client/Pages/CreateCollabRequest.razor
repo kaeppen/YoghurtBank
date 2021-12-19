@@ -15,7 +15,7 @@
 <p>You create new request by filling out the input form below</p>
 
 
-<EditForm Model="@request" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@request">
     <DataAnnotationsValidator />
     <ValidationSummary />
     @if(!IsUnsolicited && loaded)
