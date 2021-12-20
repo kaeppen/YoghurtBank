@@ -3,7 +3,7 @@ public interface ICollaborationRequestRepository
 {
     Task<CollaborationRequestDetailsDTO> CreateAsync(CollaborationRequestCreateDTO request);
     Task<CollaborationRequestDetailsDTO> FindById(int id); //aka GET
-    Task<int?> DeleteAsync(int id); //returværdi skal overvejes -> det skal nok være noget status-agtigt
+    Task<int?> DeleteAsync(int id);
 
     Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByIdeaAsync(int ideaId);
 

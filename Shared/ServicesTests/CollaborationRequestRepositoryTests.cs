@@ -383,17 +383,15 @@ namespace ServicesTests
             Assert.Null(entity);
         }
 
-
-        //TODO denne skal rettes når vi har fundet en god status at returnere
         [Fact]
-        public async Task DeleteAsync_given_invalid_id_returns_minusone()
+        public async Task DeleteAsync_given_invalid_id_returns_null()
         {
             //make sure that it doesnt exists
             var entity = _context.CollaborationRequests.Find(500);
             Assert.Null(entity);
 
             var result = await _repo.DeleteAsync(500);
-            Assert.Equal(null, result);
+            Assert.Null(result);
         }
 
         [Fact]
