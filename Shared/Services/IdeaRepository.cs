@@ -63,7 +63,7 @@
 
         public async Task<IdeaDetailsDTO> UpdateAsync(int id, IdeaUpdateDTO update)
         {
-            var entity = await _context.Ideas.FindAsync(id);
+            var entity = await _context.Ideas.Where(i => i.Id == id).Include(i => i.Creator).FirstOrDefaultAsync();
             if(entity == null)
             {
                 return null; //RETURN A STATUS INSTEAD
@@ -80,7 +80,7 @@
             entity.Type = update.Type != null ? update.Type : entity.Type;
 
             await _context.SaveChangesAsync();
-            return new IdeaDetailsDTO
+            var idea = new IdeaDetailsDTO
             {
                 Id = entity.Id,
                 CreatorId = entity.Creator.Id,
@@ -91,8 +91,10 @@
                 AmountOfCollaborators = entity.AmountOfCollaborators,
                 Open = entity.Open,
                 TimeToComplete = entity.TimeToComplete,
-                StartDate = entity.StartDate
+                StartDate = entity.StartDate,
+                Type = entity.Type
             };
+            return idea;
         }
         
         public async Task<int> DeleteAsync(int id)
