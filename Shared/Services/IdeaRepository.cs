@@ -99,11 +99,18 @@
         
         public async Task<int> DeleteAsync(int id)
         {
-            var entity = await _context.Ideas.FindAsync(id);
+            var entity = await _context.Ideas.Where(i => i.Id == id).Include(i => i.Creator).FirstOrDefaultAsync();
             if(entity == null)
             {
                 return -1; //needs to be changed! 
             }
+            
+            //get all collabrequests with the idea and delete them 
+            var requests = await _context.CollaborationRequests.Where(c => c.Idea.Id == entity.Id)
+                .Include(c => c.Requestee)
+                .Include(c => c.Requestee).ToListAsync();
+            _context.CollaborationRequests.RemoveRange(requests);
+ 
             _context.Ideas.Remove(entity);
             await _context.SaveChangesAsync();
             return entity.Id;
