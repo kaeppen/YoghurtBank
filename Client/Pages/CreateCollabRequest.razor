@@ -1,5 +1,5 @@
 <!---Inspired by Rasmus Lystrøm https://github.com/ondfisk/BDSA2021 -->
-@page "/createrequest"
+@page "/createrequest/{ideaid:int}"
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
@@ -7,16 +7,36 @@
 
 @attribute [Authorize]
 @inject HttpClient Http
+@inject AuthenticationStateProvider auth
 
+@if (user == null)
+{
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+
+}
+else
+{
 
 <PageTitle>Create a request for collaboration</PageTitle>
-<h1>Register your idea for a project!</h1>
-<p>You register a new idea by filling out the input form below</p>
+<h1>Your collaboration journey starts with a simple application!</h1>
+<p>You create new request by filling out the input form below</p>
 
 
-<EditForm Model="@request" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@request">
     <DataAnnotationsValidator />
     <ValidationSummary />
+    @if(!IsUnsolicited && loaded)
+    {
+        <div class="form-group">
+        <label for="Request">You are now applying for the idea</label>
+        <InputText id="Title" readonly="readonly" @bind-Value="idea.Title" class="form-control" />
+        <label for="Request">Belonging to</label>
+        <InputText id="Owner" readonly="readonly" @bind-Value="ideaOwner.UserName" class="form-control" />
+        </div>
+    }
     <div class="form-group">
         <label for="Application">Application</label>
         <InputTextArea id="Application" @bind-Value="request.Application" class="form-control" />
@@ -25,7 +45,7 @@
         <label for="AmountOfCollaborators">Amount of collaborators</label>
         <InputNumber id="Description" @bind-Value="request.AmountOfCollaborators" class="form-control" />
     </div> EN CREATEDTO TAGER PT. IKKE ET AMOUNT OF COLLABS-->
-    @if(supervisors != null)
+    @if(IsUnsolicited && supervisors != null)
     {
         <p class="card-text">Available supervisors:</p>
                <ul class="list-group list-group-flush">
@@ -35,88 +55,70 @@
                        <li class="list-group-item"><button @onclick="@(() => PickSupervisor(super.Id))" class="btn btn-secondary">@super.UserName</button></li>
                    }
                </ul>
-                
-               @* plz make carousel work: https://www.mikesdotnetting.com/article/351/display-images-in-bootstrap-carousel-using-razor-pages-and-entity-framework
-                <div class="carousel slide" data-ride="carousel" data-interval="2000">
-                   <div class="carousel-inner">
-                       @foreach(var super in supervisors)
-                       {
-                           <div class="carousel-item active">@super.UserName </div> 
-                       }
-                       
-                   </div>
-               </div>
-
-                   
-                <div class="carousel carousel-slider center">
-                     @foreach (var super in supervisors)
-                   {
-                       <div class="carousel-fixed-item center">
-                        <a class="carousel-item"><button class="btn btn-secondary">@super.UserName</button></a>
-                       </div> 
-                   }
-                </div> *@
-    } else {
+    } 
+    else if(IsUnsolicited && (supervisors == null || supervisors.Count() == 0))
+    {
         <h1>There are no supervisors to choose from</h1>
     }
     <div class="form-group">
         <br />
-        <button type="submit" class="btn btn-success">Create</button>
+        <button type="submit" class="btn btn-success" @onclick="Create">Create</button>
         <button type="reset" class="btn btn-secondary">Reset</button>
-        <button type="button" class="btn btn-primary" @onclick="Cancel">Cancel</button>
     </div>
 </EditForm>
 
-
+}
 
 
 
 @code {
-    //StudentId skal autoudfyldes baseret på aktuel bruger
-    //--
-    //ideaid -> kan automatisk sendes med når man trykker på "request collab" knap på en idea
-    //--
     //CreateDTO skal laves om til at tage et antal collaborators + der skal laves et tjek for 
     //om det stemmer overens med ideens antal collabor's
 
+    [Parameter]
+    public int? ideaid {get; set;}
+    private IdeaDetailsDTO? idea; 
+    private UserDetailsDTO? user; 
     private CollaborationRequestCreateDTO request = new(); 
-    private DateTime end;
     private UserDetailsDTO[]? supervisors;
+    private AuthenticationState? authState;
+    private bool IsUnsolicited = false;
+    private UserDetailsDTO? ideaOwner;  
+    private bool loaded;
 
     protected override async Task OnInitializedAsync()
     {
         supervisors = await Http.GetFromJsonAsync<UserDetailsDTO[]>("https://localhost:7095/api/users");
+        authState = await auth.GetAuthenticationStateAsync();
+        var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+        
+        try 
+        {
+            idea = await Http.GetFromJsonAsync<IdeaDetailsDTO>($"https://localhost:7095/api/idea/{ideaid}");
+            request.StudentId = user.Id;
+            request.SupervisorId = idea.CreatorId;
+            request.IdeaId = idea.Id;
 
+            ideaOwner = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/id/{idea.CreatorId}");
+            loaded = true; //this is not very pretty, but it does the job atm 
+        } 
+        catch(Exception e)
+        {
+            IsUnsolicited = true; 
+            request.StudentId = user.Id;
+            request.IdeaId = null;
+        } 
     }
-
     
-
-    private async Task HandleValidSubmit()
+    //"bypassing" HandleValidSubmit
+    private async Task Create()
     {
-        //create-knappen kalder automatisk denne hvis alle felter er udfyldt 
-        //pt. kan vi ikke finde ud af at enforce at en supervisor skal være valgt 
-
-
-        //API kald til når request skal gemmes 
-        //var result = await Http.PostAsJsonAsync("https://localhost:7194/api/collaborationrequest", request);
-
-        Console.WriteLine("Success");
+        var result = await Http.PostAsJsonAsync("https://localhost:7095/api/collaborationrequest", request);
     }
-
-    private void Cancel()
-    {
-        Console.WriteLine("Cancelled");
-    }
-
-    //private async void Create()
-    //{
-    //    //not done... 
-    //    Console.WriteLine("Create has been called");        
-    //}
 
     private void PickSupervisor(int Id)
     {
         request.SupervisorId = Id;
-        Console.WriteLine($"SuperId of request has been set to {request.SupervisorId}");
     }
 }

@@ -9,6 +9,15 @@
 @inject NavigationManager NavMan
 @inject AuthenticationStateProvider auth
 
+@if (user == null)
+{
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+}
+else
+{
 
 <PageTitle>Create Idea</PageTitle>
 <h1>Register your idea for a project!</h1>
@@ -73,6 +82,7 @@ else
     </div>
     </EditForm>
 }
+}
 
 @code {
     private UserDetailsDTO? user;
@@ -113,8 +123,8 @@ else
         {
             DateError = false;
             //chop off timestamps
-            end = end.Date; 
-            idea.StartDate = idea.StartDate.Date; 
+            end = end.Date.ToUniversalTime(); 
+            idea.StartDate = idea.StartDate.Date.ToUniversalTime(); 
             //calculate time to complete 
             idea.TimeToComplete = (end-idea.StartDate); 
             idea.Open = true; //bare sæt den som åben pr. default, eller? 

@@ -36,15 +36,16 @@ else
             <p class="card-text">Creator (skal nok laves om, et id kan ikke bruges til meget): <br> @idea.CreatorId</p>
             <p class="card-text">Amount of participants: <br> @idea.AmountOfCollaborators</p>
             <p class="card-text">State: <br> @idea.Open</p>
-            <p class="card-text">Time of creation: <br> @idea.Posted</p>
-            
+            <p class="card-text">Date of creation: <br> @idea.Posted.ToShortDateString()</p>
         </div>
-        <div class="card-body">
-            <button type="button" class="btn btn-primary" @onclick="Edit">Edit</button>
-            <button type="button" class="btn btn-danger" @onclick="Delete">Delete</button>
+        <div>
+            <div class="card-body">
+            <button type="button" class="btn btn-primary" style="background-color: green" @onclick="@(() => RequestCollab(idea.Id))">Request collaboration</button>
+            </div>
         </div>
     </div>
     </div>
+
 }
 
 }
@@ -71,14 +72,9 @@ else
         idea = await Http.GetFromJsonAsync<IdeaDetailsDTO>($"https://localhost:7095/api/idea/{ideaId}");
         await base.OnParametersSetAsync(); //is this necessary?
     }
-
-    private void Edit()
+    private void RequestCollab(int id)
     {
-        Console.WriteLine("Edit");
+        NavMan.NavigateTo($"https://localhost:7095/createrequest/{id}");
     }
 
-    private void Delete()
-    {
-        Console.WriteLine("Delete");
-    }
 }

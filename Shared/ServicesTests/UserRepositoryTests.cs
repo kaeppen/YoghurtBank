@@ -27,10 +27,22 @@ namespace ServicesTests
             var context = new YoghurtContext(builder.Options);
             context.Database.EnsureCreated();
 
-            User Mette = new Student { Id = 1, UserName = "Mette", Email = "MetteFredriksen@yahoo.dk", CollaborationRequests = new List<CollaborationRequest> { } };
-            User Sofia = new Student { Id = 2, UserName = "Sofia", Email = "sofkj@itu.dk", CollaborationRequests = new List<CollaborationRequest> { } };
-            User Jens = new Supervisor { Id = 3, UserName = "Jens", Email = "jens@munk.dk", CollaborationRequests = new List<CollaborationRequest> { } };
-            User Line = new Supervisor { Id = 4, UserName = "Line", Email = "linetrine@retteguiden.dk", CollaborationRequests = new List<CollaborationRequest> { } };
+            User Mette = new Student { Id = 1, 
+                            UserName = "Mette", 
+                            Email = "MetteFredriksen@yahoo.dk", 
+                            CollaborationRequests = new List<CollaborationRequest> { } };
+            User Sofia = new Student { Id = 2, 
+                            UserName = "Sofia", 
+                            Email = "sofkj@itu.dk", 
+                            CollaborationRequests = new List<CollaborationRequest> { } };
+            User Jens = new Supervisor { Id = 3, 
+                            UserName = "Jens", 
+                            Email = "jens@munk.dk", 
+                            CollaborationRequests = new List<CollaborationRequest> { } };
+            User Line = new Supervisor { Id = 4, 
+                            UserName = "Line", 
+                            Email = "linetrine@retteguiden.dk", 
+                            CollaborationRequests = new List<CollaborationRequest> { } };
 
             context.Users.AddRange(
                 Mette, Sofia, Jens, Line
@@ -61,7 +73,6 @@ namespace ServicesTests
         [Fact]
         public async Task FindUserByIdAsync_given_invalid_Id_returns_notFound_and_null()
         {
-
             int userId = 10;
             var actualUser = await _repository.FindUserByIdAsync(userId);
 
@@ -72,23 +83,20 @@ namespace ServicesTests
         [Fact]
         public async Task FindUserByIdAsync_given_id_2_returns_UserDetailsDTO()
         {
-
+            #region Arrange
             int userId = 2;
+            #endregion
+
+            #region Act
             var user = await _repository.FindUserByIdAsync(userId);
+            #endregion
 
-            var expected = new UserDetailsDTO
-            {
-                Id = 2,
-                UserName = "Sofia",
-                UserType = "Student",
-                Email = "sofkj@itu.dk"
-
-            };
-
+            #region Assert
             Assert.Equal(2, user.Id);
             Assert.Equal("Sofia", user.UserName);
             Assert.Equal("Student", user.UserType);
             Assert.Equal("sofkj@itu.dk", user.Email);
+            #endregion
         }
 
         [Fact]
@@ -156,8 +164,6 @@ namespace ServicesTests
             Assert.Equal("test@test.dk", result.Email);
         }
 
-
-        //change this if method is changed to return something else in case of no type...
         [Fact]
         public async Task CreateAsync_given_invalid_usertype_returns_null()
         {
@@ -174,8 +180,10 @@ namespace ServicesTests
             var Line = await _repository.FindUserByIdAsync(4);
 
             var result = await _repository.GetAllSupervisors();
-            //Assert.Equal(2, result.Count());
-            Assert.Collection(result,
+
+            Assert.Equal(2, result.Count);
+            Assert.Collection(result, 
+            
                 user => Assert.Equal(Jens, user),
                 user => Assert.Equal(Line, user)
             );
@@ -187,10 +195,8 @@ namespace ServicesTests
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
+                    
                 }
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 disposed = true;
             }
         }
