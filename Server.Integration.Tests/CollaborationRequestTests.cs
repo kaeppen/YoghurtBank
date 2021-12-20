@@ -42,7 +42,7 @@ namespace Server.Integration.Tests
                 Id = 1,
                 Status = CollaborationRequestStatus.ApprovedByStudent
             };
-            var response = await _client.PutAsJsonAsync($"api/collaborationrequest{1}", update);
+            var response = await _client.PutAsJsonAsync($"api/collaborationrequest/{1}", update);
             response.EnsureSuccessStatusCode();
         }
 
