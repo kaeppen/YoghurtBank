@@ -30,7 +30,6 @@ public class IdeaTests : IClassFixture<CustomWebApplicationFactory>
         Assert.NotNull(ideas);
         Assert.NotEmpty(ideas);
     }
-    
 
     [Fact]
     public async Task Post_returns_success_code()
@@ -70,7 +69,18 @@ public class IdeaTests : IClassFixture<CustomWebApplicationFactory>
         var deletedId = await response.Content.ReadFromJsonAsync<int>();
         Assert.Equal(1, deletedId);
     }
-
+    
+      
+    [Fact]
+    public async Task GetBySuperId_given_5_returns_3_ideas()
+    {
+        var id = 5; 
+        var ideas = await _client.GetFromJsonAsync<IdeaDetailsDTO[]>($"api/idea/user/{id}");
+        Assert.NotNull(ideas);
+        Assert.NotEmpty(ideas);
+        Assert.Equal(3, ideas.Length);
+    }
+    
     [Fact]
     public async Task Put_returns_success_and_updatedto()
     {
