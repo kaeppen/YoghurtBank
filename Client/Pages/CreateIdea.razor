@@ -9,6 +9,15 @@
 @inject NavigationManager NavMan
 @inject AuthenticationStateProvider auth
 
+@if (user == null)
+{
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+}
+else
+{
 
 <PageTitle>Create Idea</PageTitle>
 <h1>Register your idea for a project!</h1>
@@ -72,6 +81,7 @@ else
         <button type="reset" class="btn btn-secondary">Reset</button>
     </div>
     </EditForm>
+}
 }
 
 @code {
