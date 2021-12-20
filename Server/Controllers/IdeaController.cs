@@ -52,6 +52,8 @@
 
         [Authorize]
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<int> Delete(int id)
         {
             //der skal vel være noget logik der tjekker at det er korrekt bruger og den derfor godt må slettes? 
@@ -68,6 +70,8 @@
 
         [Authorize]
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType( StatusCodes.Status204NoContent)]
         public async Task<IdeaDetailsDTO> Put(int id, IdeaUpdateDTO update) 
         {
             var ideaToUpdate = await _repository.UpdateAsync(id, update);
