@@ -1,4 +1,5 @@
 namespace Server.Integration.Tests
+//Largely inspired by https://github.com/ondfisk/BDSA2021
 {
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
