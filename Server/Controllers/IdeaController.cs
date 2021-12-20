@@ -74,16 +74,7 @@
         [ProducesResponseType( StatusCodes.Status204NoContent)]
         public async Task<IdeaDetailsDTO> Put(int id, IdeaUpdateDTO update) 
         {
-            var ideaToUpdate = await _repository.UpdateAsync(id, update);
-
-            if (ideaToUpdate == null)
-            {
-                //returner en status, dette gøre metoden ikke inde i repo den returnere blot null. Der foretages dog allerede null tjek i repo metode.
-                throw new NotImplementedException();
-            } else 
-            {
-                return ideaToUpdate;
-            }
+            return await _repository.UpdateAsync(id, update);
         }
          
     }
