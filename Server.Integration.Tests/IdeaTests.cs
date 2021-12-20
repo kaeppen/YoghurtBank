@@ -90,7 +90,7 @@ public class IdeaTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal("NewTitle", updated.Title);
         Assert.Equal("NewSubject", updated.Subject);
         Assert.Equal("NewDescription", updated.Description);
-        Assert.Equal(400, updated.AmountOfCollaborators);
+        Assert.Equal(5, updated.AmountOfCollaborators);
         Assert.False(updated.Open);
     }
 
