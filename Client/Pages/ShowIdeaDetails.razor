@@ -11,6 +11,17 @@
 
 <!-- Layout inspired by Rasmus Lystrøm https://github.com/ondfisk/BDSA2021 -->
 
+@if (user == null)
+{
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+
+}
+else
+{
+
 @if(idea != null)
 {
     <div>
@@ -36,11 +47,24 @@
     </div>
 }
 
-
+}
 @code {
     [Parameter]
     public int? ideaId { get; set; }
     private IdeaDetailsDTO? idea;
+
+    private UserDetailsDTO? user;
+    private AuthenticationState authState;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        authState = await auth.GetAuthenticationStateAsync();
+
+        //find user
+        var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+    }
 
     protected override async Task OnParametersSetAsync()
     {

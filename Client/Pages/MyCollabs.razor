@@ -8,6 +8,16 @@
 @inject AuthenticationStateProvider auth
 
 
+@if (user == null)
+{
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+}
+else
+{
+
 <PageTitle>View My CollaborationRequest</PageTitle>
 <h1>Your collaboration request</h1>
 
@@ -20,6 +30,9 @@ else
 {
     foreach(var request in requests)
     {
+    
+    SetBackgroundColor(request);
+
      <div class="card" style="width: 18rem;">
                 <div class="card-header">
                     <h3>Request</h3>
@@ -40,13 +53,13 @@ else
 } else if(Student && request.Status == CollaborationRequestStatus.ApprovedBySupervisor) {
                 <div class="card-body" id = "btn-panelStud">
                     <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green" @onclick="@(() => ApproveReqSTUD(request))">Approve</button> 
-                    <button type="button" class="btn btn-secondary" style="background-color: red" @onclick="(() => DeclineReq(request))">Decline</button>  
+                    <button type="button" class="btn btn-secondary" style="background-color: red" @onclick="@(() => DeclineReq(request))">Decline</button>  
                 </div>              
 } else {
 
                 <div class="card-body" id = "btn-panelSup">
-                    <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green" @onclick="(() => ApproveReqSUP(request))">Approve</button> 
-                    <button type="button" class="btn btn-secondary" style="background-color: red" @onclick="(() => DeclineReq(request))">Decline</button>  
+                    <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green" @onclick="@(() => ApproveReqSUP(request))">Approve</button> 
+                    <button type="button" class="btn btn-secondary" style="background-color: red" @onclick="@(() => DeclineReq(request))">Decline</button>  
                 </div>
 }
 
@@ -55,32 +68,31 @@ else
 }
 
 </div>
-
-<style>
-    #Approvebtn:focus {
-        background-color: #3a0647;
-    }
-</style>
+}
 
 @code {
 
-    private AuthenticationState authState;
+    private UserDetailsDTO? user;
 
     private CollaborationRequestDetailsDTO[]? requests;
-
-
 
     private string Background {get; set;} = "yellow";
 
     private bool Student {get; set; } = false;
+
+    private AuthenticationState authState;
 
 
     protected override async Task OnInitializedAsync()
     {
         authState = await auth.GetAuthenticationStateAsync();
 
+        //find user 
+        var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+
         var name = "";
-        var mail = "";
+        mail = "";
         var claims = auth.GetAuthenticationStateAsync().Result.User.Claims; 
         foreach(var claim in claims)
         {
@@ -94,39 +106,68 @@ else
         Console.WriteLine(mail);
 
 
+        //Roboto@university.com
+        //Lol@Blenis.dk
 
-        requests = await FindOrCreate("Roboto@university.com");
+        mail = "Lol@Blenis.dk";
+    
+        requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
 
-
-        //FindOrCreate(mail);
     } 
+
+    private void SetBackgroundColor(CollaborationRequestDetailsDTO request) 
+    {
+        switch(request.Status) 
+        {
+            case CollaborationRequestStatus.ApprovedByStudent: 
+                Background = "green";
+                break;
+
+            case CollaborationRequestStatus.Declined:
+                Background = "red";
+                break;
+
+            case CollaborationRequestStatus.Waiting:
+                Background = "yellow";
+                break;
+
+            case CollaborationRequestStatus.ApprovedBySupervisor:
+                Background = "yellow";
+                break;
+        }
+    }
 
     private async Task ApproveReqSTUD(CollaborationRequestDetailsDTO request)
     {
-       Background = "green";
-
        var updated = new CollaborationRequestUpdateDTO {
             Id = request.Id,
             Status = CollaborationRequestStatus.ApprovedByStudent
         };
 
         await Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}", updated);
+
+        await OnInitializedAsync();
        
     }
 
     private async Task ApproveReqSUP(CollaborationRequestDetailsDTO request)
-    {
+    {        
+
         var updated = new CollaborationRequestUpdateDTO {
             Id = request.Id,
             Status = CollaborationRequestStatus.ApprovedBySupervisor
         };
 
-        await Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}", updated);
+        Console.WriteLine(updated.Id);
+
+        await Http.PutAsJsonAsync($"https://localhost:7095/api/collaborationRequest/{request.Id}", updated);
+
+        await OnInitializedAsync();
+    
     }
 
     private async Task DeclineReq(CollaborationRequestDetailsDTO request) 
     {
-        Background = "red";
 
         var updated = new CollaborationRequestUpdateDTO {
             Id = request.Id,
@@ -134,30 +175,8 @@ else
         };
 
         await Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}", updated);
-    }
-  
 
-    private async Task<CollaborationRequestDetailsDTO[]> FindOrCreate(string email)
-    {
-        var user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{email}");
-        if(user != null)
-        {
-           @*  Console.WriteLine(user.UserName);
-            Console.WriteLine(user.Email);
-            Console.WriteLine(user.Id); *@
-
-
-            Student = user.UserType.Equals("Student"); 
-            return await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
-        }
-        else
-        {
-            return null;
-            //Redirect to register user site.
-            //NavMan.NavigateTo("/registerUser", false);
-
-            //Response.Redirect("~/ControllerName/ActionName");
-        }
+        await OnInitializedAsync();
 
     }
 

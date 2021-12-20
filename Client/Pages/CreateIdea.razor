@@ -7,13 +7,24 @@
 @attribute [Authorize]
 @inject HttpClient Http
 @inject NavigationManager NavMan
+@inject AuthenticationStateProvider auth
+
 
 <PageTitle>Create Idea</PageTitle>
 <h1>Register your idea for a project!</h1>
 <p>You register a new idea by filling out the input form below</p>
 
 
-<EditForm Model="@idea" OnValidSubmit="@HandleValidSubmit">
+@if(isStudent)
+{
+    <h1>Students cannot post ideas</h1>
+      <div class="form-group">
+        <button type="button" class="btn btn-primary" @onclick="Nav">Browse ideas</button>
+    </div>
+}
+else 
+{
+    <EditForm Model="@idea" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
     <div class="form-group">
@@ -59,27 +70,30 @@
         <br />
         <button type="submit" class="btn btn-success" >Create</button>
         <button type="reset" class="btn btn-secondary">Reset</button>
-        <button type="button" class="btn btn-primary" @onclick="Back">Back</button>
     </div>
-    
-    
-
-</EditForm>
-
-
-
-
+    </EditForm>
+}
 
 @code {
+    private UserDetailsDTO? user;
+    private AuthenticationState authState;
     private bool DateError = false;
-    private IdeaCreateDTO idea = new IdeaCreateDTO{CreatorId = 4}; //creatorid hardcoded while we figure out how to differentiate users
+    private IdeaCreateDTO idea = new IdeaCreateDTO{};
     private DateTime end  {get; set;} = DateTime.UtcNow;
-    public DateTime DefaultValue {get; set;} = DateTime.UtcNow;
     public string DateErrorMessage {get; set;}
+    private bool isStudent = true;
 
     protected override async Task OnInitializedAsync()
     {
-        idea.StartDate = DefaultValue; 
+        authState = await auth.GetAuthenticationStateAsync();
+        var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
+        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+        if(user.UserType == "Supervisor")
+        {
+            isStudent = false;
+            idea.CreatorId = user.Id;
+            idea.StartDate = DateTime.UtcNow;
+        }
     }
 
     private async Task HandleValidSubmit()
@@ -98,20 +112,18 @@
         else 
         {
             DateError = false;
-            //bad cast        
-            TimeSpan time = end-idea.StartDate;
-            idea.TimeToComplete = (TimeSpan) (end-idea.StartDate); 
+            //chop off timestamps
+            end = end.Date.ToUniversalTime(); 
+            idea.StartDate = idea.StartDate.Date.ToUniversalTime(); 
+            //calculate time to complete 
+            idea.TimeToComplete = (end-idea.StartDate); 
             idea.Open = true; //bare sæt den som åben pr. default, eller? 
             var result = await Http.PostAsJsonAsync("https://localhost:7095/api/idea", idea);
-            Console.WriteLine($"Created {result}"); 
         }
-        Console.WriteLine("Success");
-
-           
     }
-
-    private void Back()
+    
+    private void Nav()
     {
-        //find a way to go back :) or delete the button all together
+        NavMan.NavigateTo($"https://localhost:7095/ideas");
     }
 }
