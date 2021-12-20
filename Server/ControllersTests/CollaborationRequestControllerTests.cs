@@ -143,7 +143,7 @@ public class CollaborationRequestControllerTests
     public async Task Delete_given_invalid_id_returns_null()
     {
         int? number = null;
-        _repoMock.Setup(m => m.DeleteAsync(9999).ReturnsAsync(number));
+        _repoMock.Setup(m => m.DeleteAsync(9999)).ReturnsAsync(number);
         var result = await _controller.Delete(9999);
         Assert.Null(result);
     }

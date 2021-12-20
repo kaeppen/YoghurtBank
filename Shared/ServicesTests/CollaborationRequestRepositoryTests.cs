@@ -185,7 +185,7 @@ namespace ServicesTests
         public async Task FindTypeOfUser_given_SupervisorId_returns_true()
         {
             var supervisorId = 3;
-            var  result = await _repo.FindUserType(supervisorId);
+            var result = await _repo.FindUserType(supervisorId);
             Assert.True(result);
         }
 
@@ -193,7 +193,7 @@ namespace ServicesTests
         public async Task FindTypeOfUser_given_StudentId_returns_false()
         {
             var studentId = 1;
-            var  result = await _repo.FindUserType(studentId);
+            var result = await _repo.FindUserType(studentId);
             Assert.False(result);
         }
 
@@ -241,7 +241,7 @@ namespace ServicesTests
 
             #endregion
         }
-        
+
         [Fact]
         public async Task CreateAsync_given_invalid_supervisorid_returns_null()
         {
@@ -254,11 +254,11 @@ namespace ServicesTests
             };
 
             var created = await _repo.CreateAsync(cb1);
-            
+
             Assert.Null(created);
 
         }
-        
+
         [Fact]
         public async Task CreateAsync_given_invalid_studentid_returns_null()
         {
@@ -271,7 +271,7 @@ namespace ServicesTests
             };
 
             var created = await _repo.CreateAsync(cb1);
-            
+
             Assert.Null(created);
 
         }
@@ -342,7 +342,7 @@ namespace ServicesTests
             #endregion
         }
 
-        
+
         //ER DENNE IKKE DUBLET AF EN ANDEN? 
         [Fact]
         public async Task AddAsync_given_collabrequest_returns_collabrequest()
@@ -393,7 +393,7 @@ namespace ServicesTests
             Assert.Null(entity);
 
             var result = await _repo.DeleteAsync(500);
-            Assert.Equal(-1, result);
+            Assert.Equal(null, result);
         }
 
         [Fact]

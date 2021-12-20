@@ -110,9 +110,9 @@ namespace YoghurtBank.ServicesTests
             #endregion
         }
 
-        //TODO change this when return value of delete is changed
+
         [Fact]
-        public async Task DeleteAsync_given_invalid_id_returns_minusone()
+        public async Task DeleteAsync_given_invalid_id_returns_null()
         {
             var id = 500;
             //make sure it doesnt exists initally
@@ -120,7 +120,7 @@ namespace YoghurtBank.ServicesTests
             Assert.Null(entity);
 
             var result = await _repo.DeleteAsync(id);
-            Assert.Equal(-1, result);
+            Assert.Null(result);
         }
 
         [Fact]
@@ -173,7 +173,7 @@ namespace YoghurtBank.ServicesTests
         public async Task UpdateAsync_given_nonexisting_entity_returns_null()
         {
             var id = 666;
-            
+
             var update = new IdeaUpdateDTO
             {
                 Title = "NewTitle",
@@ -184,7 +184,7 @@ namespace YoghurtBank.ServicesTests
             };
 
             var result = await _repo.UpdateAsync(id, update);
-            
+
             Assert.Null(result);
         }
 
@@ -226,7 +226,7 @@ namespace YoghurtBank.ServicesTests
         public async Task FIndIdeaBySupervisor_given_invalid_SupervisorId_returns_null()
         {
             int supervisorid = 5;
-            
+
             var ideasFromSupervisorId = await _repo.FindIdeasBySupervisorIdAsync(supervisorid);
 
             Assert.Equal((HttpStatusCode.NotFound, null), ideasFromSupervisorId);

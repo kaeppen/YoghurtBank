@@ -52,7 +52,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete("{id}")]
-    public async Task<int> Delete(int id)
+    public async Task<int?> Delete(int id)
     {
         return await _repository.DeleteAsync(id);
     }

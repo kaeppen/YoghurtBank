@@ -111,7 +111,7 @@ namespace ServicesTests
 
         //change this when return value changes
         [Fact]
-        public async Task DeleteAsync_given_invalid_id_returns_minusone()
+        public async Task DeleteAsync_given_invalid_id_returns_null()
         {
             #region Arrange
             var id = 500;
@@ -124,7 +124,7 @@ namespace ServicesTests
 
             #region Assert
             Assert.Null(entityNoExist);
-            Assert.Equal(-1, result);
+            Assert.Null(result);
             #endregion
         }
 
@@ -175,9 +175,9 @@ namespace ServicesTests
 
             var result = await _repository.GetAllSupervisors();
             //Assert.Equal(2, result.Count());
-            Assert.Collection(result, 
+            Assert.Collection(result,
                 user => Assert.Equal(Jens, user),
-                user => Assert.Equal(Line, user)  
+                user => Assert.Equal(Line, user)
             );
         }
 
