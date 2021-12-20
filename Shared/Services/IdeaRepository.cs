@@ -119,7 +119,7 @@
         
         public async Task<IdeaDetailsDTO> FindIdeaDetailsAsync(int IdeaId)
         {
-            var idea = _context.Ideas.Where(i => i.Id == IdeaId).Include(i => i.Creator).FirstOrDefault();
+            var idea = await _context.Ideas.Where(i => i.Id == IdeaId).Include(i => i.Creator).FirstOrDefaultAsync();
             //eager loading according to: https://docs.microsoft.com/en-us/ef/ef6/querying/related-data 
             //for some reason, creators can be null here - lazy loading error or something else? https://entityframeworkcore.com/knowledge-base/39434878/how-to-include-related-tables-in-dbset-find--- 
            //var idea = await _context.Ideas.FindAsync(IdeaId);
@@ -150,7 +150,7 @@
 
         public async Task<(HttpStatusCode code, IReadOnlyCollection<IdeaDetailsDTO> list)> FindIdeasBySupervisorIdAsync(int userId)
         {
-            var supervisor = (Supervisor) _context.Users.Find(userId);
+            var supervisor = (Supervisor) await _context.Users.FindAsync(userId);
 
              if (supervisor == null) 
              {
