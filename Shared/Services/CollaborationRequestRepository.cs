@@ -96,15 +96,12 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
 
     public async Task<CollaborationRequestDetailsDTO> UpdateAsync(int id, CollaborationRequestUpdateDTO updateRequest)
     {
-        //TODO should more properties be update-able? 
-
-        //var entity = await _context.CollaborationRequests.FindAsync(id);
 
         var entity = await _context.CollaborationRequests.Where(c => c.Id == id).Include(c => c.Requester).Include(c => c.Requestee).FirstOrDefaultAsync();
 
         if (entity == null)
         {
-            return null;  //RETURN A STATUS INSTEAD
+            return null; 
         }
         entity.Status = updateRequest.Status;
         await _context.SaveChangesAsync();
@@ -122,7 +119,7 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
     public async Task<bool> FindUserType(int id)
     {
         var user = await _context.Users.FindAsync(id);
-
+        
         if (user.GetType() == typeof(Supervisor))
         {
             return true;
@@ -136,7 +133,6 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
 
     public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsBySupervisorAsync(int supervisorId)
     {
-
 
         var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requestee.Id == supervisorId).Select(c => new CollaborationRequestDetailsDTO
         {
@@ -152,7 +148,6 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
 
     public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByStudentAsync(int studentId)
     {
-
 
         var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requester.Id == studentId).Select(c => new CollaborationRequestDetailsDTO
         {

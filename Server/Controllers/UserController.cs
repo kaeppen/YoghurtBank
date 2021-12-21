@@ -11,7 +11,6 @@ public class UserController : ControllerBase
     private readonly ILogger<UserController> _logger;
     private readonly IUserRepository _repository;
 
-
     public UserController(ILogger<UserController> logger, IUserRepository repository)
     {
         _logger = logger;

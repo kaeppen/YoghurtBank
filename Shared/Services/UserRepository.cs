@@ -1,7 +1,6 @@
 ﻿
 public class UserRepository : IUserRepository
 {
-
     private readonly IYoghurtContext _context;
 
     public UserRepository(IYoghurtContext context)
@@ -30,6 +29,7 @@ public class UserRepository : IUserRepository
         var user = await _context.Users.FindAsync(userId);
 
         if (user == null)
+
         {
             return null;
         }
@@ -83,7 +83,7 @@ public class UserRepository : IUserRepository
             UserName = u.UserName,
             UserType = u.GetType().Name,
             Email = u.Email
-        }).FirstOrDefaultAsync();
+        }).FirstOrDefaultAsync()
 
         return user;
     }

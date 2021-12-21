@@ -195,7 +195,7 @@ namespace ServicesTests
 
             Assert.Equal(2, result.Count);
             Assert.Collection(result,
-
+            
                 user => Assert.Equal(Jens, user),
                 user => Assert.Equal(Line, user)
             );

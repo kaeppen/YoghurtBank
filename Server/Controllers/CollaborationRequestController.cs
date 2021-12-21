@@ -78,9 +78,6 @@ public class CollaborationRequestController : ControllerBase
     public async Task<IActionResult> Post(CollaborationRequestCreateDTO request)
     {
         var created = await _repository.CreateAsync(request);
-
-
-        return CreatedAtAction(nameof(Get), new { created.Application }, created);
     }
 
     [Authorize]
@@ -101,6 +98,4 @@ public class CollaborationRequestController : ControllerBase
     {
         return (await _repository.UpdateAsync(id, request));
     }
-
-
 }

@@ -11,7 +11,6 @@ public class IdeaRepository : IIdeaRepository
     public async Task<IdeaDetailsDTO> CreateAsync(IdeaCreateDTO idea)
     {
 
-
         var sup = (Supervisor)await _context.Users.FindAsync(idea.CreatorId);
 
         var entity = new Idea
@@ -53,6 +52,7 @@ public class IdeaRepository : IIdeaRepository
         if (entity == null)
         {
             return null;
+
         }
 
 
@@ -99,7 +99,6 @@ public class IdeaRepository : IIdeaRepository
         var idea = _context.Ideas.Where(i => i.Id == IdeaId).Include(i => i.Creator).FirstOrDefault();
         //eager loading according to: https://docs.microsoft.com/en-us/ef/ef6/querying/related-data 
         //for some reason, creators can be null here - lazy loading error or something else? https://entityframeworkcore.com/knowledge-base/39434878/how-to-include-related-tables-in-dbset-find--- 
-
 
         if (idea == null)
         {
