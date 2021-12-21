@@ -1,5 +1,4 @@
-
-
+namespace YoghurtBank.Server;
 
     [Authorize]
     [ApiController]

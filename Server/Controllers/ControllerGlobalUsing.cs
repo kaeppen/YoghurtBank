@@ -17,5 +17,5 @@ global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Identity.Web.Resource;
-
+global using YoghurtBank.Shared.Services;
 

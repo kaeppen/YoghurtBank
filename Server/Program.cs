@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.OpenApi.Models;
 using YoghurtBank.Server;
 using YoghurtBank.Shared;
+using YoghurtBank.Shared.Infrastructure;
+using YoghurtBank.Shared.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);

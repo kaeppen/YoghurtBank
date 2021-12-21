@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
+namespace YoghurtBank.Server.ControllerTests;
+
     public class CollaborationRequestControllerTests
     {
 

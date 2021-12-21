@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using YoghurtBank.Shared;
+using YoghurtBank.Shared.Infrastructure;
+using YoghurtBank.Shared.Services;
 
-    public static class SeedExtensions
+public static class SeedExtensions
     {
         public static async Task<IHost> SeedAsync(this IHost host)
         {

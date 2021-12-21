@@ -1,4 +1,6 @@
+global using YoghurtBank.Shared.Services;
 
+namespace YoghurtBank.Server.ControllerTests;
     public class IdeaControllerTests
     {
         private readonly IdeaController _controller;
