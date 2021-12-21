@@ -97,6 +97,24 @@ public class UserControllerTests
     }
 
     [Fact]
+    public async Task Delete_given_invalid_id_returns_null()
+    {
+        #region Arrange
+        int? number = null;
+        var id = 1;
+        _repoMock.Setup(m => m.DeleteAsync(id)).ReturnsAsync(number);
+        #endregion
+
+        #region Act
+        var result = await _controller.Delete(id);
+        #endregion
+
+        #region Assert
+        Assert.Null(result);
+        #endregion
+    }
+
+    [Fact]
     public async Task GetAllSupervisors_returns_all_supervisors()
     {
         var Mikki = new UserDetailsDTO
