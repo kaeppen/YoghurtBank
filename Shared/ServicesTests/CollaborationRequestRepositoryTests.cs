@@ -207,7 +207,7 @@ namespace ServicesTests
             #region Assert
             Assert.NotNull(result);
             Assert.Equal(4, result.Count);
-            //
+
             #endregion
         }
 
@@ -230,7 +230,7 @@ namespace ServicesTests
 
             #region Assert
             Assert.Equal("Heya", created.Application);
-            Assert.Equal(1, created. StudentId);
+            Assert.Equal(1, created.StudentId);
             Assert.Equal(2, created.SupervisorId);
             Assert.Equal(CollaborationRequestStatus.Waiting, created.Status);
             #endregion
@@ -336,7 +336,7 @@ namespace ServicesTests
         [Fact]
         public async Task DeleteAsync_given_invalid_id_returns_null()
         {
-            //make sure that it doesnt exists
+
             var entity = _context.CollaborationRequests.Find(500);
             Assert.Null(entity);
 

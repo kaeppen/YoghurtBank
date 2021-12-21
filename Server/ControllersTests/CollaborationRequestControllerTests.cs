@@ -126,7 +126,6 @@ public class CollaborationRequestControllerTests
 
         Assert.Equal(cb1, result?.Value);
         Assert.Equal("Get", result?.ActionName);
-        //denne her har application og science fordi Get inde i controlleren bruger application -> det skal laves om til id 
         Assert.Equal(KeyValuePair.Create("Application", (object?)"Science"), result?.RouteValues?.Single());
     }
 

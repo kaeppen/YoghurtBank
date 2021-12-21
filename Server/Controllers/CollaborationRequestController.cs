@@ -22,7 +22,7 @@ public class CollaborationRequestController : ControllerBase
     [HttpGet]
     public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> Get()
     {
-        //når der virkelig er data på bordet, så kan det være vi skal tjekke for om listen er tom.
+
         //dummy data
         var cb1 = new CollaborationRequestDetailsDTO
         {
@@ -78,8 +78,6 @@ public class CollaborationRequestController : ControllerBase
     public async Task<IActionResult> Post(CollaborationRequestCreateDTO request)
     {
         var created = await _repository.CreateAsync(request);
-
-        //det skal være created.Id og ikke application, men DTO har ikke id pt... 
         return CreatedAtAction(nameof(Get), new { created.Application }, created);
     }
 
@@ -89,8 +87,6 @@ public class CollaborationRequestController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<int?> Delete(int id)
     {
-        //hvis returtypen laves om på deleteasync, kan det være at denne metodes
-        //returtype skal laves om til IActionResult i stedet og følge rasmus' eksempel
         return await _repository.DeleteAsync(id);
     }
 
@@ -101,9 +97,6 @@ public class CollaborationRequestController : ControllerBase
     [ProducesResponseType(typeof(CollaborationRequestDetailsDTO), StatusCodes.Status200OK)]
     public async Task<CollaborationRequestDetailsDTO> Put(int id, [FromBody] CollaborationRequestUpdateDTO request)
     {
-        //denne er ligesom delete, den følger ikke 100% rasmus' eksempel ift. IActionResult returtype og returnering af .ToActionResult
         return (await _repository.UpdateAsync(id, request));
     }
-
-
 }

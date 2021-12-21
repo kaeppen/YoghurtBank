@@ -78,6 +78,7 @@ public class UserControllerTests
         #endregion
     }
 
+
     [Fact]
     public async Task Delete_given_valid_id_returns_that_id()
     {
@@ -95,8 +96,6 @@ public class UserControllerTests
         #endregion
     }
 
-
-    //RET TIL, DET ER IKKE MENINGEN AT -1 SKAL RETURNERES I TILFÆLDE AF FEJL
     [Fact]
     public async Task Delete_given_invalid_id_returns_null()
     {

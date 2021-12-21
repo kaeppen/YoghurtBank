@@ -11,67 +11,78 @@
 @if (user == null)
 {
     <p><em>You have to be registrated to get access to this site</em></p>
-        <div class="card-body">
-            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
-        </div>
+    <div class="card-body">
+    <button type="button" class="btn btn-primary" onclick="location.href ='https://localhost:7095/registerUser'">Go to
+        registration</button>
+</div>
 }
 else
 {
 
-<PageTitle>View My CollaborationRequest</PageTitle>
-<h1>Your collaboration request</h1>
+    <PageTitle>View My CollaborationRequest</PageTitle>
+    <h1>Your collaboration request</h1>
 
-<div style="display: flex">
-@if(requests == null || requests.Length == 0)
-{
-    <h2>No requests!</h2>
-}
-else 
-{
-    foreach(var request in requests)
-    {
-    
-    SetBackgroundColor(request);
+    <div style="display: flex">
+    @if (requests == null || requests.Length == 0)
+        {
+            <h2>No requests!</h2>
+        }
+        else
+        {
+            foreach (var request in requests)
+            {
 
-     <div class="card" style="width: 18rem;">
-                <div class="card-header">
-                    <h3>Request</h3>
+                SetBackgroundColor(request);
+
+                <div class="card" style="width: 18rem;">
+                    <div class="card-header">
+                        <h3>Request</h3>
+                    </div>
+
+
+                    <div class="card-body" style="background-color: @Background;">
+                        <h5 class="card-title">Requester: <br> @request.StudentId</h5>
+                        <p class="card-text">Requested: <br> @request.SupervisorId</p>
+                        <p class="card-text">Application: <br> @request.Application</p>
+                        <p class="card-text">Status: <br> @request.Status</p>
+
+                    </div>
+
+                    @if (request.Status == CollaborationRequestStatus.Declined)
+                    {
+                        <div class="card-body" id="btn-panelStud">
+                        </div>
+                    }
+                    else if (Student && request.Status != CollaborationRequestStatus.ApprovedBySupervisor)
+                    {
+                        <div class="card-body" id="btn-panelStud">
+                        </div>
+                    }
+                    else if (Student && request.Status == CollaborationRequestStatus.ApprovedBySupervisor)
+                    {
+                        <div class="card-body" id="btn-panelStud">
+                            <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green"
+                @onclick="@(() => ApproveReqSTUD(request))">Approve</button>
+                            <button type="button" class="btn btn-secondary" style="background-color: red"
+                @onclick="@(() => DeclineReq(request))">Decline</button>
+                        </div>
+                    }
+                    else
+                    {
+
+                        <div class="card-body" id="btn-panelSup">
+                            <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green"
+                @onclick="@(() => ApproveReqSUP(request))">Approve</button>
+                            <button type="button" class="btn btn-secondary" style="background-color: red"
+                @onclick="@(() => DeclineReq(request))">Decline</button>
+                        </div>
+                    }
+
                 </div>
+            }
+        }
 
-
-                <div class="card-body" style="background-color: @Background;">
-                    <h5 class="card-title">Requester: <br> @request.StudentId</h5>
-                    <p class="card-text">Requested: <br> @request.SupervisorId</p>
-                    <p class="card-text">Application: <br> @request.Application</p>
-                    <p class="card-text">Status: <br> @request.Status</p>
-
-                </div>
-
-@if(request.Status == CollaborationRequestStatus.Declined)
-{
-        <div class="card-body" id = "btn-panelStud">
-                </div>
-} else if(Student && request.Status != CollaborationRequestStatus.ApprovedBySupervisor) {
-                <div class="card-body" id = "btn-panelStud">
-                </div>
-} else if(Student && request.Status == CollaborationRequestStatus.ApprovedBySupervisor) {
-                <div class="card-body" id = "btn-panelStud">
-                    <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green" @onclick="@(() => ApproveReqSTUD(request))">Approve</button> 
-                    <button type="button" class="btn btn-secondary" style="background-color: red" @onclick="@(() => DeclineReq(request))">Decline</button>  
-                </div>              
-} else {
-
-                <div class="card-body" id = "btn-panelSup">
-                    <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green" @onclick="@(() => ApproveReqSUP(request))">Approve</button> 
-                    <button type="button" class="btn btn-secondary" style="background-color: red" @onclick="@(() => DeclineReq(request))">Decline</button>  
-                </div>
-}
-
-     </div>
-    }
-}
-
-</div>
+    </div>
 }
 
 @code {
@@ -80,9 +91,9 @@ else
 
     private CollaborationRequestDetailsDTO[]? requests;
 
-    private string Background {get; set;} = "yellow";
+    private string Background { get; set; } = "yellow";
 
-    private bool Student {get; set; } = false;
+    private bool Student { get; set; } = false;
 
     private AuthenticationState authState;
 
@@ -91,40 +102,34 @@ else
     {
         authState = await auth.GetAuthenticationStateAsync();
 
-        //find user 
+        //find user
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
         user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
         Student = user.UserType == "Student";
 
         var name = "";
         mail = "";
-        var claims = auth.GetAuthenticationStateAsync().Result.User.Claims; 
-        foreach(var claim in claims)
+        var claims = auth.GetAuthenticationStateAsync().Result.User.Claims;
+        foreach (var claim in claims)
         {
             //navn
             //email
-            if(claim.Type.Equals("name")) name = claim.Value;
-            if(claim.Type.Equals("preferred_username")) mail = claim.Value;
+            if (claim.Type.Equals("name")) name = claim.Value;
+            if (claim.Type.Equals("preferred_username")) mail = claim.Value;
         }
 
-        Console.WriteLine(name);
-        Console.WriteLine(mail);
 
 
-        //Roboto@university.com
-        //Lol@Blenis.dk
+        requests = await
+        Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
 
-        mail = "Lol@Blenis.dk";
-    
-        requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
+    }
 
-    } 
-
-    private void SetBackgroundColor(CollaborationRequestDetailsDTO request) 
+    private void SetBackgroundColor(CollaborationRequestDetailsDTO request)
     {
-        switch(request.Status) 
+        switch (request.Status)
         {
-            case CollaborationRequestStatus.ApprovedByStudent: 
+            case CollaborationRequestStatus.ApprovedByStudent:
                 Background = "green";
                 break;
 
@@ -144,42 +149,50 @@ else
 
     private async Task ApproveReqSTUD(CollaborationRequestDetailsDTO request)
     {
-       var updated = new CollaborationRequestUpdateDTO {
+        var updated = new CollaborationRequestUpdateDTO
+        {
             Id = request.Id,
             Status = CollaborationRequestStatus.ApprovedByStudent
         };
 
-        await Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}", updated);
+        await
+        Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}",
+        updated);
 
         await OnInitializedAsync();
-       
+
     }
 
     private async Task ApproveReqSUP(CollaborationRequestDetailsDTO request)
-    {        
+    {
 
-        var updated = new CollaborationRequestUpdateDTO {
+        var updated = new CollaborationRequestUpdateDTO
+        {
             Id = request.Id,
             Status = CollaborationRequestStatus.ApprovedBySupervisor
         };
 
-        Console.WriteLine(updated.Id);
 
-        await Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}", updated);
+        await
+        Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}",
+        updated);
 
         await OnInitializedAsync();
-    
+
     }
 
-    private async Task DeclineReq(CollaborationRequestDetailsDTO request) 
+    private async Task DeclineReq(CollaborationRequestDetailsDTO request)
     {
 
-        var updated = new CollaborationRequestUpdateDTO {
+        var updated = new CollaborationRequestUpdateDTO
+        {
             Id = request.Id,
             Status = CollaborationRequestStatus.Declined
         };
 
-        await Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}", updated);
+        await
+        Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}",
+        updated);
 
         await OnInitializedAsync();
 

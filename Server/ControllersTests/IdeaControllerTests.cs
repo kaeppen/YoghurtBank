@@ -12,7 +12,6 @@ public class IdeaControllerTests
 
     }
 
-    //skal laves om hvis vi vælger at bruge actionresults?
     [Fact]
     public async Task GetById_given_non_existing_id_returns_null()
     {

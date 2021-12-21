@@ -10,25 +10,9 @@ public class IdeaRepository : IIdeaRepository
     }
     public async Task<IdeaDetailsDTO> CreateAsync(IdeaCreateDTO idea)
     {
-        //man kan ikke finde en supervisors ideas frem... Der mangler noget i tabellen? For man kan ikke include u.ideas, for det er jo ikke en 
-        //supervisor man finder frem men blot en user. 
-        //var sup = (Supervisor) await _context.Users.Where(u => u.Id == idea.CreatorId).Include(u => u.).FirstOrDefaultAsync();
-        //List<Idea> ideas = await _context.Ideas.Where(i => i.Creator.Id == sup.Id).Select(i => i).ToListAsync();
 
         var sup = (Supervisor)await _context.Users.FindAsync(idea.CreatorId);
 
-        // if(sup == null)
-        // {
-        //     Environment.Exit(1);
-        //     //hvad fanden skal der ske brødre??? -> på en eller anden måde skal vi indikere at der skete en fejl
-        // }
-        // if(sup.Ideas == null)
-        // {
-        //     Console.WriteLine("NEJ!!!");
-        //     //Environment.Exit(1);
-        // }
-
-        //husk noget null-checking 
         var entity = new Idea
         {
             Creator = sup,
@@ -43,7 +27,7 @@ public class IdeaRepository : IIdeaRepository
             Posted = DateTime.UtcNow.Date
         };
 
-        //sup.Ideas.Add(entity); -> læs de øverste linjer! 
+
         _context.Ideas.Add(entity);
         await _context.SaveChangesAsync();
 
@@ -67,7 +51,8 @@ public class IdeaRepository : IIdeaRepository
         var entity = await _context.Ideas.FindAsync(id);
         if (entity == null)
         {
-            return null; //RETURN A STATUS INSTEAD
+            return null;
+
         }
 
 
@@ -114,9 +99,6 @@ public class IdeaRepository : IIdeaRepository
         var idea = _context.Ideas.Where(i => i.Id == IdeaId).Include(i => i.Creator).FirstOrDefault();
         //eager loading according to: https://docs.microsoft.com/en-us/ef/ef6/querying/related-data 
         //for some reason, creators can be null here - lazy loading error or something else? https://entityframeworkcore.com/knowledge-base/39434878/how-to-include-related-tables-in-dbset-find--- 
-        //var idea = await _context.Ideas.FindAsync(IdeaId);
-
-        //improve this -> status codes? 
 
         if (idea == null)
         {

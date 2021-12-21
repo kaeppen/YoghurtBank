@@ -1,7 +1,6 @@
 ﻿
 public class UserRepository : IUserRepository
 {
-    //der skal være et readonly felt med en dbcontext, vi skal først installere EF core i projektet 
     private readonly IYoghurtContext _context;
 
     public UserRepository(IYoghurtContext context)
@@ -21,16 +20,16 @@ public class UserRepository : IUserRepository
         }
         else
         {
-            return null; //change this?
+            return null;
         }
     }
 
-    //TODO: i removed the http status code, and had to make user nullable
     public async Task<UserDetailsDTO>? FindUserByIdAsync(int userId)
     {
         var user = await _context.Users.FindAsync(userId);
 
         if (user == null)
+
         {
             return null;
         }
@@ -90,18 +89,7 @@ public class UserRepository : IUserRepository
     }
     public async Task<IReadOnlyCollection<UserDetailsDTO>> GetAllSupervisors()
     {
-        // var users = await _context.Users.Where(c => c.GetType() == typeof(Supervisor))
-        // .Select(u => new UserDetailsDTO
-        // {
-        //     Id = u.Id,
-        //     UserName = u.UserName,
-        //     UserType = "Supervisor",
-        //     Email = u.Email
 
-        // }).ToListAsync();
-
-
-        //Det her er meget grimt, plz få det til at virke med linq 
         var returnlist = new List<UserDetailsDTO>();
         foreach (var user in _context.Users)
         {
