@@ -181,7 +181,7 @@ namespace ServicesTests
         public async Task FindTypeOfUser_given_SupervisorId_returns_true()
         {
             var supervisorId = 3;
-            var  result = await _repo.FindUserType(supervisorId);
+            var result = await _repo.FindUserType(supervisorId);
             Assert.True(result);
         }
 
@@ -189,7 +189,7 @@ namespace ServicesTests
         public async Task FindTypeOfUser_given_StudentId_returns_false()
         {
             var studentId = 1;
-            var  result = await _repo.FindUserType(studentId);
+            var result = await _repo.FindUserType(studentId);
             Assert.False(result);
         }
 
@@ -235,7 +235,7 @@ namespace ServicesTests
             Assert.Equal(CollaborationRequestStatus.Waiting, created.Status);
             #endregion
         }
-        
+
         [Fact]
         public async Task CreateAsync_given_invalid_supervisorid_returns_null()
         {
@@ -248,10 +248,10 @@ namespace ServicesTests
             };
 
             var created = await _repo.CreateAsync(cb1);
-            
+
             Assert.Null(created);
         }
-        
+
         [Fact]
         public async Task CreateAsync_given_invalid_studentid_returns_null()
         {
@@ -264,7 +264,7 @@ namespace ServicesTests
             };
 
             var created = await _repo.CreateAsync(cb1);
-            
+
             Assert.Null(created);
         }
 
@@ -319,7 +319,7 @@ namespace ServicesTests
             Assert.Equal("Yes", requests.ElementAt(0).Application);
             Assert.Equal(CollaborationRequestStatus.Waiting, requests.ElementAt(0).Status);
             Assert.Equal("No", requests.ElementAt(1).Application);
-            Assert.Equal(CollaborationRequestStatus.ApprovedBySupervisor, requests.ElementAt(1).Status);
+
             #endregion
         }
 
@@ -333,17 +333,15 @@ namespace ServicesTests
             Assert.Null(entity);
         }
 
-
-        //TODO denne skal rettes når vi har fundet en god status at returnere
         [Fact]
-        public async Task DeleteAsync_given_invalid_id_returns_minusone()
+        public async Task DeleteAsync_given_invalid_id_returns_null()
         {
             //make sure that it doesnt exists
             var entity = _context.CollaborationRequests.Find(500);
             Assert.Null(entity);
 
             var result = await _repo.DeleteAsync(500);
-            Assert.Equal(-1, result);
+            Assert.Null(result);
         }
 
         [Fact]

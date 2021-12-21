@@ -1,16 +1,16 @@
 ﻿
 
-    public interface IUserRepository
-    {
-        Task<UserDetailsDTO>? FindUserByIdAsync(int userId);
+public interface IUserRepository
+{
+    Task<UserDetailsDTO>? FindUserByIdAsync(int userId);
 
-        Task<UserDetailsDTO> CreateAsync(UserCreateDTO user);
+    Task<UserDetailsDTO> CreateAsync(UserCreateDTO user);
 
-        Task<int> DeleteAsync(int id);
+    Task<int?> DeleteAsync(int id);
 
-        Task<IReadOnlyCollection<UserDetailsDTO>> GetAllSupervisors(); 
+    Task<IReadOnlyCollection<UserDetailsDTO>> GetAllSupervisors();
 
-        Task<UserDetailsDTO> FindUserByEmail(string email);
+    Task<UserDetailsDTO> FindUserByEmail(string email);
 
-    }
+}
 

@@ -1,171 +1,172 @@
 
 
-   
-    public class CollaborationRequestRepository : ICollaborationRequestRepository
+
+public class CollaborationRequestRepository : ICollaborationRequestRepository
+{
+    private readonly IYoghurtContext _context;
+    public CollaborationRequestRepository(IYoghurtContext context)
     {
-        private readonly IYoghurtContext _context;
-        public CollaborationRequestRepository(IYoghurtContext context)
+        _context = context;
+    }
+
+    public async Task<CollaborationRequestDetailsDTO> CreateAsync(CollaborationRequestCreateDTO request)
+    {
+        //husk null-checking
+        var student = (Student)await _context.Users.FindAsync(request.StudentId);
+        if (student == null) return null;
+        var super = (Supervisor)await _context.Users.FindAsync(request.SupervisorId);
+        if (super == null) return null;
+
+        var entity = new CollaborationRequest
         {
-            _context = context;
-        }
-        
-        public async Task<CollaborationRequestDetailsDTO> CreateAsync(CollaborationRequestCreateDTO request)
+            Requester = student,
+            Requestee = super,
+            Application = request.Application,
+            Idea = await _context.Ideas.FindAsync(request.IdeaId),
+            Status = CollaborationRequestStatus.Waiting // bliver status ikke sat automatisk
+        };
+
+        _context.CollaborationRequests.Add(entity);
+        super.CollaborationRequests.Add(entity);
+        student.CollaborationRequests.Add(entity);
+        await _context.SaveChangesAsync();
+
+        return new CollaborationRequestDetailsDTO
         {
-            //husk null-checking
-            var student = (Student) await _context.Users.FindAsync(request.StudentId);
-            if(student == null) return null;
-            var super = (Supervisor) await _context.Users.FindAsync(request.SupervisorId);
-            if(super == null) return null;
-
-            var entity = new CollaborationRequest
-            {
-                Requester = student,
-                Requestee = super,
-                Application = request.Application,
-                Idea = await _context.Ideas.FindAsync(request.IdeaId),
-                Status = CollaborationRequestStatus.Waiting // bliver status ikke sat automatisk
-            };
-            
-            _context.CollaborationRequests.Add(entity);
-            super.CollaborationRequests.Add(entity);
-            student.CollaborationRequests.Add(entity);
-            await _context.SaveChangesAsync();
-
-            return new CollaborationRequestDetailsDTO
-            {
-                Id = entity.Id,
-                StudentId = entity.Requester.Id,
-                SupervisorId = entity.Requestee.Id,
-                Status = entity.Status,
-                Application = entity.Application,
-            };
-        }
+            Id = entity.Id,
+            StudentId = entity.Requester.Id,
+            SupervisorId = entity.Requestee.Id,
+            Status = entity.Status,
+            Application = entity.Application,
+        };
+    }
 
 
-        public async Task<CollaborationRequestDetailsDTO> FindById(int id)
+    public async Task<CollaborationRequestDetailsDTO> FindById(int id)
+    {
+        var collabRequest = await _context.CollaborationRequests.FindAsync(id);
+
+        if (collabRequest == null)
         {
-            var collabRequest = await _context.CollaborationRequests.FindAsync(id);
-
-            if(collabRequest == null)
-            { 
-                return null;
-            }
-            
-            //husk null-checking
-            
-            return new CollaborationRequestDetailsDTO
-            {
-                Id = collabRequest.Id,
-                StudentId = _context.Users.FindAsync(collabRequest.Id).Result.Id,
-                SupervisorId = _context.Users.FindAsync(collabRequest.Id).Result.Id,
-                Status = collabRequest.Status,
-                Application = collabRequest.Application
-            };
+            return null;
         }
 
-        public async Task<int> DeleteAsync(int id)
-        {
-            var entity = await _context.CollaborationRequests.FindAsync(id);
-            if (entity == null)
-            {
-                return -1; //BAD! create a status instead
-            }
+        //husk null-checking
 
-            _context.CollaborationRequests.Remove(entity);
-            await _context.SaveChangesAsync();
-            return entity.Id;
+        return new CollaborationRequestDetailsDTO
+        {
+            Id = collabRequest.Id,
+            StudentId = _context.Users.FindAsync(collabRequest.Id).Result.Id,
+            SupervisorId = _context.Users.FindAsync(collabRequest.Id).Result.Id,
+            Status = collabRequest.Status,
+            Application = collabRequest.Application
+        };
+    }
+
+    public async Task<int?> DeleteAsync(int id)
+    {
+        var entity = await _context.CollaborationRequests.FindAsync(id);
+        if (entity == null)
+        {
+            return null;
         }
 
+        _context.CollaborationRequests.Remove(entity);
+        await _context.SaveChangesAsync();
+        return entity.Id;
+    }
 
-        public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByIdeaAsync(int ideaId)
+
+    public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByIdeaAsync(int ideaId)
+    {
+        //husk null-checking på c.idea 
+        var requests = await _context.CollaborationRequests.Where(c => c.Idea.Id == ideaId).Select(c => new CollaborationRequestDetailsDTO
         {
-            //husk null-checking på c.idea 
-            var requests = await _context.CollaborationRequests.Where(c => c.Idea.Id == ideaId).Select(c => new CollaborationRequestDetailsDTO
-            {
-                Id = c.Id,
-                StudentId = c.Requester.Id,
-                SupervisorId = c.Requestee.Id,
-                Application = c.Application,
-                Status = c.Status
-                
-            }).ToListAsync();
+            Id = c.Id,
+            StudentId = c.Requester.Id,
+            SupervisorId = c.Requestee.Id,
+            Application = c.Application,
+            Status = c.Status
 
-            return requests.AsReadOnly();
+        }).ToListAsync();
 
+        return requests.AsReadOnly();
+
+    }
+
+    public async Task<CollaborationRequestDetailsDTO> UpdateAsync(int id, CollaborationRequestUpdateDTO updateRequest)
+    {
+        //TODO should more properties be update-able? 
+
+        Console.WriteLine("Blenis!");
+
+        //var entity = await _context.CollaborationRequests.FindAsync(id);
+
+        var entity = await _context.CollaborationRequests.Where(c => c.Id == id).Include(c => c.Requester).Include(c => c.Requestee).FirstOrDefaultAsync();
+
+        if (entity == null)
+        {
+            Console.WriteLine("ID: " + id);
+            Console.WriteLine("Ingen Blenis!");
+            return null;  //RETURN A STATUS INSTEAD
         }
+        entity.Status = updateRequest.Status;
+        await _context.SaveChangesAsync();
 
-        public async Task<CollaborationRequestDetailsDTO> UpdateAsync(int id, CollaborationRequestUpdateDTO updateRequest)
+        return new CollaborationRequestDetailsDTO
         {
-            //TODO should more properties be update-able? 
+            Id = entity.Id,
+            Status = entity.Status,
+            Application = entity.Application,
+            StudentId = entity.Requester.Id,
+            SupervisorId = entity.Requestee.Id
+        };
+    }
 
-            Console.WriteLine("Blenis!");
-            
-            //var entity = await _context.CollaborationRequests.FindAsync(id);
+    public async Task<bool> FindUserType(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
 
-            var entity = await _context.CollaborationRequests.Where(c => c.Id == id).Include(c => c.Requester).Include(c => c.Requestee).FirstOrDefaultAsync();
-
-            if (entity == null)
-            {
-                Console.WriteLine("ID: " + id);
-                Console.WriteLine("Ingen Blenis!");
-                return null;  //RETURN A STATUS INSTEAD
-            }
-            entity.Status = updateRequest.Status;
-            await _context.SaveChangesAsync();
-
-            return new CollaborationRequestDetailsDTO
-            {
-                Id = entity.Id,
-                Status = entity.Status,
-                Application = entity.Application,
-                StudentId = entity.Requester.Id,
-                SupervisorId = entity.Requestee.Id
-            };
+        if (user.GetType() == typeof(Supervisor))
+        {
+            return true;
         }
-        
-        public async Task<bool> FindUserType(int id)
+        else
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user.GetType() == typeof(Supervisor))
-            {
-                return true;
-            } else 
-            {
-                return false;
-            }
-        }
-
-
-        public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsBySupervisorAsync(int supervisorId)
-        {
-            //overvej type checking, så vi er sikre på at metoden ikke bruges til at finde den forkerte type user
-            
-            var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requestee.Id == supervisorId).Select(c => new CollaborationRequestDetailsDTO
-            {
-                Id = c.Id,
-                StudentId = c.Requester.Id,
-                SupervisorId = c.Requestee.Id,
-                Application = c.Application,
-                Status = c.Status
-                
-            }).ToListAsync();
-            return listOfUsers.AsReadOnly();
-        }
-
-        public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByStudentAsync(int studentId)
-        {
-            //overvej type checking, så vi er sikre på at metoden ikke bruges til at finde den forkerte type user
-
-            var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requester.Id == studentId).Select(c => new CollaborationRequestDetailsDTO
-            {
-                Id = c.Id,
-                StudentId = c.Requester.Id,
-                SupervisorId = c.Requestee.Id,
-                Application = c.Application,
-                Status = c.Status
-                
-            }).ToListAsync();
-            return listOfUsers.AsReadOnly();
+            return false;
         }
     }
+
+
+    public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsBySupervisorAsync(int supervisorId)
+    {
+        //overvej type checking, så vi er sikre på at metoden ikke bruges til at finde den forkerte type user
+
+        var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requestee.Id == supervisorId).Select(c => new CollaborationRequestDetailsDTO
+        {
+            Id = c.Id,
+            StudentId = c.Requester.Id,
+            SupervisorId = c.Requestee.Id,
+            Application = c.Application,
+            Status = c.Status
+
+        }).ToListAsync();
+        return listOfUsers.AsReadOnly();
+    }
+
+    public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByStudentAsync(int studentId)
+    {
+        //overvej type checking, så vi er sikre på at metoden ikke bruges til at finde den forkerte type user
+
+        var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requester.Id == studentId).Select(c => new CollaborationRequestDetailsDTO
+        {
+            Id = c.Id,
+            StudentId = c.Requester.Id,
+            SupervisorId = c.Requestee.Id,
+            Application = c.Application,
+            Status = c.Status
+
+        }).ToListAsync();
+        return listOfUsers.AsReadOnly();
+    }
+}
