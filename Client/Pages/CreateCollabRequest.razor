@@ -72,8 +72,7 @@ else
 
 
 @code {
-    //CreateDTO skal laves om til at tage et antal collaborators + der skal laves et tjek for 
-    //om det stemmer overens med ideens antal collabor's
+    
 
     [Parameter]
     public int? ideaid {get; set;}
@@ -101,7 +100,7 @@ else
             request.IdeaId = idea.Id;
 
             ideaOwner = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/id/{idea.CreatorId}");
-            loaded = true; //this is not very pretty, but it does the job atm 
+            loaded = true; 
         } 
         catch(Exception e)
         {

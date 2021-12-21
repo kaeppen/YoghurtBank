@@ -96,7 +96,7 @@ public class UserControllerTests
     }
 
 
-    //RET TIL, DET ER IKKE MENINGEN AT -1 SKAL RETURNERES I TILFÆLDE AF FEJL
+
     [Fact]
     public async Task Delete_given_invalid_id_returns_null()
     {

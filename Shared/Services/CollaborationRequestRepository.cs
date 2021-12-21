@@ -98,16 +98,12 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
     {
         //TODO should more properties be update-able? 
 
-        Console.WriteLine("Blenis!");
-
         //var entity = await _context.CollaborationRequests.FindAsync(id);
 
         var entity = await _context.CollaborationRequests.Where(c => c.Id == id).Include(c => c.Requester).Include(c => c.Requestee).FirstOrDefaultAsync();
 
         if (entity == null)
         {
-            Console.WriteLine("ID: " + id);
-            Console.WriteLine("Ingen Blenis!");
             return null;  //RETURN A STATUS INSTEAD
         }
         entity.Status = updateRequest.Status;
@@ -140,7 +136,7 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
 
     public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsBySupervisorAsync(int supervisorId)
     {
-        //overvej type checking, så vi er sikre på at metoden ikke bruges til at finde den forkerte type user
+
 
         var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requestee.Id == supervisorId).Select(c => new CollaborationRequestDetailsDTO
         {
@@ -156,7 +152,7 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
 
     public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByStudentAsync(int studentId)
     {
-        //overvej type checking, så vi er sikre på at metoden ikke bruges til at finde den forkerte type user
+
 
         var listOfUsers = await _context.CollaborationRequests.Where(c => c.Requester.Id == studentId).Select(c => new CollaborationRequestDetailsDTO
         {

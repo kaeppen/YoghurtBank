@@ -30,48 +30,62 @@ namespace YoghurtBank.ServicesTests
             var supervisor1 = new Supervisor { Id = 1, UserName = "Torben", CollaborationRequests = new List<CollaborationRequest>(), Ideas = new List<Idea>(), Email = "torben@toben.dk" };
             var supervisor2 = new Supervisor { Id = 2, UserName = "Preben", CollaborationRequests = new List<CollaborationRequest>(), Ideas = new List<Idea>(), Email = "preben@test.dk" };
 
-            var idea1 = new Idea {Id = 1, 
-                            Creator = supervisor2, 
-                            Posted = _now, Subject = "Big Data",   
-                            Title = "Big data is good", 
-                            Description = "Big data gives value", 
-                            AmountOfCollaborators = 3, 
-                            Open = true, 
-                            TimeToComplete = _today - _today, 
-                            StartDate = _now, 
-                            Type = IdeaType.Bachelor };
-            var idea2 = new Idea { Id = 2, 
-                            Creator = supervisor1, 
-                            Posted = _now, 
-                            Subject = "Data Intelligence", 
-                            Title = "Data Intelligence is good", 
-                            Description = "Data Intelligence gives value", 
-                            AmountOfCollaborators = 1, 
-                            Open = true, 
-                            TimeToComplete = _today - _today, 
-                            StartDate = _now, 
-                            Type = IdeaType.PhD };
-            var idea3 = new Idea { Id = 3, 
-                            Creator = supervisor2, 
-                            Posted = _now, Subject = "DevOps", 
-                            Title = "DevOps is good", 
-                            Description = "DevOps gives value", 
-                            AmountOfCollaborators = 2, 
-                            Open = true, 
-                            TimeToComplete = _today - _today, 
-                            StartDate = _now, 
-                            Type = IdeaType.Project };
-            var idea4 = new Idea { Id = 4, 
-                            Creator = supervisor1, 
-                            Posted = _now, 
-                            Subject = "Requirements Elicitation", 
-                            Title = "Requirements Elicitation is good", 
-                            Description = "Requirements Elicitation gives value",
-                            AmountOfCollaborators = 5, 
-                            Open = true, 
-                            TimeToComplete = _today - _today, 
-                            StartDate = _now, 
-                            Type = IdeaType.Masters };
+            var idea1 = new Idea
+            {
+                Id = 1,
+                Creator = supervisor2,
+                Posted = _now,
+                Subject = "Big Data",
+                Title = "Big data is good",
+                Description = "Big data gives value",
+                AmountOfCollaborators = 3,
+                Open = true,
+                TimeToComplete = _today - _today,
+                StartDate = _now,
+                Type = IdeaType.Bachelor
+            };
+            var idea2 = new Idea
+            {
+                Id = 2,
+                Creator = supervisor1,
+                Posted = _now,
+                Subject = "Data Intelligence",
+                Title = "Data Intelligence is good",
+                Description = "Data Intelligence gives value",
+                AmountOfCollaborators = 1,
+                Open = true,
+                TimeToComplete = _today - _today,
+                StartDate = _now,
+                Type = IdeaType.PhD
+            };
+            var idea3 = new Idea
+            {
+                Id = 3,
+                Creator = supervisor2,
+                Posted = _now,
+                Subject = "DevOps",
+                Title = "DevOps is good",
+                Description = "DevOps gives value",
+                AmountOfCollaborators = 2,
+                Open = true,
+                TimeToComplete = _today - _today,
+                StartDate = _now,
+                Type = IdeaType.Project
+            };
+            var idea4 = new Idea
+            {
+                Id = 4,
+                Creator = supervisor1,
+                Posted = _now,
+                Subject = "Requirements Elicitation",
+                Title = "Requirements Elicitation is good",
+                Description = "Requirements Elicitation gives value",
+                AmountOfCollaborators = 5,
+                Open = true,
+                TimeToComplete = _today - _today,
+                StartDate = _now,
+                Type = IdeaType.Masters
+            };
 
             supervisor1.Ideas.Add(idea2);
             supervisor1.Ideas.Add(idea4);
@@ -255,7 +269,7 @@ namespace YoghurtBank.ServicesTests
         [Fact]
         public async Task CreateAsync_given_something_something()
         {
-            //get 100% coverage when createasync is not a mess
+
         }
 
         [Fact]

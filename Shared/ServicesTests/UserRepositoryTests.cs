@@ -27,22 +27,34 @@ namespace ServicesTests
             var context = new YoghurtContext(builder.Options);
             context.Database.EnsureCreated();
 
-            User Mette = new Student { Id = 1, 
-                            UserName = "Mette", 
-                            Email = "MetteFredriksen@yahoo.dk", 
-                            CollaborationRequests = new List<CollaborationRequest> { } };
-            User Sofia = new Student { Id = 2, 
-                            UserName = "Sofia", 
-                            Email = "sofkj@itu.dk", 
-                            CollaborationRequests = new List<CollaborationRequest> { } };
-            User Jens = new Supervisor { Id = 3, 
-                            UserName = "Jens", 
-                            Email = "jens@munk.dk", 
-                            CollaborationRequests = new List<CollaborationRequest> { } };
-            User Line = new Supervisor { Id = 4, 
-                            UserName = "Line", 
-                            Email = "linetrine@retteguiden.dk", 
-                            CollaborationRequests = new List<CollaborationRequest> { } };
+            User Mette = new Student
+            {
+                Id = 1,
+                UserName = "Mette",
+                Email = "MetteFredriksen@yahoo.dk",
+                CollaborationRequests = new List<CollaborationRequest> { }
+            };
+            User Sofia = new Student
+            {
+                Id = 2,
+                UserName = "Sofia",
+                Email = "sofkj@itu.dk",
+                CollaborationRequests = new List<CollaborationRequest> { }
+            };
+            User Jens = new Supervisor
+            {
+                Id = 3,
+                UserName = "Jens",
+                Email = "jens@munk.dk",
+                CollaborationRequests = new List<CollaborationRequest> { }
+            };
+            User Line = new Supervisor
+            {
+                Id = 4,
+                UserName = "Line",
+                Email = "linetrine@retteguiden.dk",
+                CollaborationRequests = new List<CollaborationRequest> { }
+            };
 
             context.Users.AddRange(
                 Mette, Sofia, Jens, Line
@@ -117,7 +129,7 @@ namespace ServicesTests
             #endregion
         }
 
-        //change this when return value changes
+
         [Fact]
         public async Task DeleteAsync_given_invalid_id_returns_null()
         {
@@ -182,8 +194,8 @@ namespace ServicesTests
             var result = await _repository.GetAllSupervisors();
 
             Assert.Equal(2, result.Count);
-            Assert.Collection(result, 
-            
+            Assert.Collection(result,
+
                 user => Assert.Equal(Jens, user),
                 user => Assert.Equal(Line, user)
             );
@@ -195,7 +207,7 @@ namespace ServicesTests
             {
                 if (disposing)
                 {
-                    
+
                 }
                 disposed = true;
             }
