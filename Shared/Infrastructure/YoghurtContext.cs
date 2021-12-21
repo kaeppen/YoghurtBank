@@ -1,4 +1,4 @@
-
+namespace YoghurtBank.Shared.Infrastructure; 
     public class YoghurtContext : DbContext, IYoghurtContext
     {
         public YoghurtContext(DbContextOptions<YoghurtContext> options) : base(options) { }

@@ -1,4 +1,4 @@
-
+namespace YoghurtBank.Shared.Infrastructure; 
 
     public interface IYoghurtContext: IDisposable
     {

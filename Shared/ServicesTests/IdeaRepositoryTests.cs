@@ -1,3 +1,4 @@
+global using YoghurtBank.Shared.Services;
 using Xunit;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,7 @@ using System.Net;
 using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
+using YoghurtBank.Shared.Infrastructure;
 
 namespace YoghurtBank.ServicesTests
 {

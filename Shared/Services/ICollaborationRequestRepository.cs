@@ -1,4 +1,4 @@
-
+namespace YoghurtBank.Shared.Services;
     public interface ICollaborationRequestRepository
     {
         Task<CollaborationRequestDetailsDTO> CreateAsync(CollaborationRequestCreateDTO request);

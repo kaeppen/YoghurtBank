@@ -1,4 +1,4 @@
-﻿
+﻿namespace YoghurtBank.Shared.Services;
 
     public interface IIdeaRepository
     {

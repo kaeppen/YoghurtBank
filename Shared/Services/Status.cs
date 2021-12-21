@@ -1,3 +1,4 @@
+   namespace YoghurtBank.Shared.Services;
     public enum Status
     {
         Created,

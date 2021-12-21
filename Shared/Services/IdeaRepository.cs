@@ -1,4 +1,6 @@
-﻿
+﻿using YoghurtBank.Shared.Infrastructure;
+
+namespace YoghurtBank.Shared.Services;
 
     public class IdeaRepository : IIdeaRepository
     {

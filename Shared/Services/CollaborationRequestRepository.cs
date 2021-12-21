@@ -1,5 +1,9 @@
 
 
+global using YoghurtBank.Shared.Infrastructure;
+
+namespace YoghurtBank.Shared.Services;
+
    
     public class CollaborationRequestRepository : ICollaborationRequestRepository
     {
