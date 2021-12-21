@@ -83,7 +83,7 @@ public class UserRepository : IUserRepository
             UserName = u.UserName,
             UserType = u.GetType().Name,
             Email = u.Email
-        }).FirstOrDefaultAsync()
+        }).FirstOrDefaultAsync();
 
         return user;
     }
