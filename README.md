@@ -8,7 +8,7 @@ YoghurtBank
 Requirements for running the program: 
 - dotnet 6.0 
 - Docker 
-- Powershell / bash 
+- Powershell
 - No docker containers running on port 5432
 - Make sure that port 7095 is not already in use (the website will use this port)
 - If PostgreSQL is installed, all of it's background processes needs to be terminated 
