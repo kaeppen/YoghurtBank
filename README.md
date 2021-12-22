@@ -19,6 +19,7 @@ How to run the program:
 - Run the file "start.ps1" with Powershell
 - Open your webbrowser and go to the url: "https://localhost:7095/" 
 
+Test user credentials have been provided in the report associated to this program. 
 
 
 --------------------------------------------------------------------------------------------
