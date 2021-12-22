@@ -3,7 +3,6 @@
 
 [Authorize]
 [ApiController]
-//[Route("api/[controller]")]
 [Route("api/users")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class UserController : ControllerBase

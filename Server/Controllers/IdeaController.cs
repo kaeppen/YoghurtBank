@@ -1,6 +1,3 @@
-
-
-
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
@@ -45,12 +42,14 @@ public class IdeaController : ControllerBase
 
     }
 
-    [Authorize]
-    [HttpDelete("{id}")]
-    public async Task<int?> Delete(int id)
-    {
-        return await _repository.DeleteAsync(id);
-    }
+        [Authorize]
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<int?> Delete(int id)
+        { 
+            return await _repository.DeleteAsync(id);
+        }
 
     [AllowAnonymous]
     [HttpPost]
@@ -60,21 +59,14 @@ public class IdeaController : ControllerBase
         return await _repository.CreateAsync(idea);
     }
 
+
     [Authorize]
     [HttpPut("{id}")]
-    public async Task<IdeaDetailsDTO> Put(int id, IdeaUpdateDTO update)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType( StatusCodes.Status204NoContent)]
+    public async Task<IdeaDetailsDTO> Put(int id, IdeaUpdateDTO update) 
     {
-        var ideaToUpdate = await _repository.UpdateAsync(id, update);
-
-        if (ideaToUpdate == null)
-        {
-
-            throw new NotImplementedException();
-        }
-        else
-        {
-            return ideaToUpdate;
-        }
+        return await _repository.UpdateAsync(id, update);
     }
-
+    
 }

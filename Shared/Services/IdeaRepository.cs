@@ -48,13 +48,12 @@ public class IdeaRepository : IIdeaRepository
 
     public async Task<IdeaDetailsDTO> UpdateAsync(int id, IdeaUpdateDTO update)
     {
-        var entity = await _context.Ideas.FindAsync(id);
+         var entity = await _context.Ideas.Where(i => i.Id == id).Include(i => i.Creator).FirstOrDefaultAsync(); 
         if (entity == null)
         {
             return null;
 
         }
-
 
         entity.Title = update.Title != null ? update.Title : entity.Title;
         entity.Subject = update.Subject != null ? update.Subject : entity.Subject;
@@ -77,17 +76,22 @@ public class IdeaRepository : IIdeaRepository
             AmountOfCollaborators = entity.AmountOfCollaborators,
             Open = entity.Open,
             TimeToComplete = entity.TimeToComplete,
-            StartDate = entity.StartDate
+            StartDate = entity.StartDate,
+            Type = entity.Type
         };
     }
 
     public async Task<int?> DeleteAsync(int id)
     {
-        var entity = await _context.Ideas.FindAsync(id);
+        var entity = await _context.Ideas.Where(i => i.Id == id).Include(i => i.Creator).FirstOrDefaultAsync(); 
         if (entity == null)
         {
             return null;
         }
+        var requests = await _context.CollaborationRequests.Where(c => c.Idea.Id == entity.Id)
+            .Include(c => c.Requestee)
+            .Include(c => c.Requestee).ToListAsync();
+        _context.CollaborationRequests.RemoveRange(requests); 
         _context.Ideas.Remove(entity);
         await _context.SaveChangesAsync();
         return entity.Id;
@@ -121,26 +125,22 @@ public class IdeaRepository : IIdeaRepository
         };
     }
 
-
     public async Task<(HttpStatusCode code, IReadOnlyCollection<IdeaDetailsDTO> list)> FindIdeasBySupervisorIdAsync(int userId)
     {
-        var supervisor = (Supervisor)_context.Users.Find(userId);
-
-        if (supervisor == null)
+        var supervisor = (Supervisor) await _context.Users.FindAsync(userId);
+        if (supervisor == null) 
         {
             return (HttpStatusCode.NotFound, null);
-        }
-        else
+        } 
+        else 
         {
             var ideas = await _context.Ideas.Where(i => i.Creator.Id == userId).Select(i =>
-            new IdeaDetailsDTO
-            {
+            new IdeaDetailsDTO {
                 Id = i.Id,
                 Title = i.Title,
                 Subject = i.Subject,
                 Type = i.Type
             }).ToListAsync();
-
             return (HttpStatusCode.Accepted, ideas.AsReadOnly());
         }
     }
