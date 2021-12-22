@@ -2,8 +2,9 @@
 ![C#](https://img.shields.io/badge/c%23-%23239120.svg??style=flat-square&logo=appveyor&logo=c-sharp&logoColor=white)
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=flat-square&logo=appveyor&logo=.net&logoColor=white)
 
-# YoghurtBank
+# YoghurtBank 
 --------------------------------------------------------------------------------------------
+
 Requirements for running the program: 
 - dotnet 6.0 
 - Docker 
@@ -20,7 +21,11 @@ How to run the program:
 
 
 --------------------------------------------------------------------------------------------
-New repo, see old: https://github.com/kaeppen/YoghurtBank1.0 for history
+
+A large part of the development was done in this repository: https://github.com/kaeppen/YoghurtBank1.0 for history
+
 --------------------------------------------------------------------------------------------
-This repository has provided inspiration for the project: https://github.com/ondfisk/BDSA2021
+
+Parts of this repository has provided inspiration for the project: https://github.com/ondfisk/BDSA2021
+
 --------------------------------------------------------------------------------------------
