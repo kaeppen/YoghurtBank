@@ -9,6 +9,15 @@
 @inject NavigationManager NavMan
 @inject AuthenticationStateProvider auth
 
+@if (user == null)
+{
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+}
+else
+{
 
 <PageTitle>Create Idea</PageTitle>
 <h1>Register your idea for a project!</h1>
@@ -73,6 +82,7 @@ else
     </div>
     </EditForm>
 }
+}
 
 @code {
     private UserDetailsDTO? user;
@@ -98,7 +108,7 @@ else
 
     private async Task HandleValidSubmit()
     {
-        //This is maybe a bit flawed? -> worked fine before adding the == part, look into it
+
         if(end < DateTime.UtcNow.Date || idea.StartDate < DateTime.UtcNow.Date)
         { 
             DateError = true;
@@ -117,7 +127,7 @@ else
             idea.StartDate = idea.StartDate.Date.ToUniversalTime(); 
             //calculate time to complete 
             idea.TimeToComplete = (end-idea.StartDate); 
-            idea.Open = true; //bare sæt den som åben pr. default, eller? 
+            idea.Open = true; 
             var result = await Http.PostAsJsonAsync("https://localhost:7095/api/idea", idea);
         }
     }

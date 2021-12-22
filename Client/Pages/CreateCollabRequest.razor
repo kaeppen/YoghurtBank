@@ -9,9 +9,19 @@
 @inject HttpClient Http
 @inject AuthenticationStateProvider auth
 
+@if (user == null)
+{
+    <p><em>You have to be registrated to get access to this site</em></p>
+        <div class="card-body">
+            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
+        </div>
+
+}
+else
+{
 
 <PageTitle>Create a request for collaboration</PageTitle>
-<h1>Your collaboration journey starts with a simple pplication!</h1>
+<h1>Your collaboration journey starts with a simple application!</h1>
 <p>You create new request by filling out the input form below</p>
 
 
@@ -57,13 +67,12 @@
     </div>
 </EditForm>
 
-
+}
 
 
 
 @code {
-    //CreateDTO skal laves om til at tage et antal collaborators + der skal laves et tjek for 
-    //om det stemmer overens med ideens antal collabor's
+    
 
     [Parameter]
     public int? ideaid {get; set;}
@@ -91,7 +100,7 @@
             request.IdeaId = idea.Id;
 
             ideaOwner = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/id/{idea.CreatorId}");
-            loaded = true; //this is not very pretty, but it does the job atm 
+            loaded = true; 
         } 
         catch(Exception e)
         {

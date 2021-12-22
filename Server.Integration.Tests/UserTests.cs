@@ -32,17 +32,6 @@ namespace Server.Integration.Tests
             Assert.Equal(1, deletedId);
         }
         
-        
-        //remember to change this when return values of delete methods have been changed
-        [Fact]
-        public async Task Delete_given_nonexisting_id_returns_minusone()
-        {
-            var id = 2147483647;
-            var response = await _client.DeleteAsync($"api/users/{id}");
-            var deletedId = await response.Content.ReadFromJsonAsync<int>();
-            Assert.Equal(-1, deletedId);
-        }
-        
         [Fact]
         public async Task Post_returns_detailsdto_and_success()
         {

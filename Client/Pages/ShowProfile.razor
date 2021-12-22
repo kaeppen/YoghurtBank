@@ -31,6 +31,9 @@ else
         <div class="col-sm">
 
         <h3>My ideas</h3>
+        <div class="card-body">
+        <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
+        </div>
         @foreach (var idea in ideas)
         {
         <div class="card-body">
@@ -43,12 +46,13 @@ else
         <h3>My collaborationrequests</h3>
         @foreach (var request in requests)
         {
+            SetBackgroundColor(request);
 
-            <div class="card-body">
+            <div class="card-body" style="background-color: @Background; border-color: black; border-width: 5px; border-radius: 10px; margin-bottom: 5px; width: 50em;">
                <h5 class="card-title">Title <br> @request.Application</h5>
-               <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green">Approve</button> 
-               <button type="button" class="btn btn-secondary" style="background-color: red">Decline</button> 
-            </div>
+               @* <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green">Approve</button> 
+               <button type="button" class="btn btn-secondary" style="background-color: red">Decline</button>  *@
+            </div> 
         }
     </div>
   </div>
@@ -68,11 +72,12 @@ else
         <h3>My collaborationrequests</h3>
         @foreach (var request in requests)
         {
+            SetBackgroundColor(request);
 
-            <div class="card-body">
+            <div class="card-body" style="background-color: @Background; border-color: black; border-width: 5px; border-radius: 10px; margin-bottom: 5px; width: 50em;">
                <h5 class="card-title">Title <br> @request.Application</h5>
-               <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green">Approve</button> 
-               <button type="button" class="btn btn-secondary" style="background-color: red">Decline</button> 
+               @* <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green">Approve</button> 
+               <button type="button" class="btn btn-secondary" style="background-color: red">Decline</button>  *@
             </div>
         }
         </div>
@@ -88,6 +93,7 @@ else
     private IdeaDetailsDTO[]? ideas;
     private CollaborationRequestDetailsDTO[]? requests; 
     private AuthenticationState authState;
+    private string Background {get; set;} = "yellow";
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,8 +113,35 @@ else
         }
     }
 
+    private void NavCreate()
+    {
+        NavMan.NavigateTo($"https://localhost:7095/createidea");
+    }
+
     private void NavIdea(int ideaid)
     {
         NavMan.NavigateTo($"https://localhost:7095/ideadetails/{ideaid}");
+    }
+
+     private void SetBackgroundColor(CollaborationRequestDetailsDTO request) 
+    {
+        switch(request.Status) 
+        {
+            case CollaborationRequestStatus.ApprovedByStudent: 
+                Background = "green";
+                break;
+
+            case CollaborationRequestStatus.Declined:
+                Background = "tomato";
+                break;
+
+            case CollaborationRequestStatus.Waiting:
+                Background = "yellow";
+                break;
+
+            case CollaborationRequestStatus.ApprovedBySupervisor:
+                Background = "yellow";
+                break;
+        }
     }
 }
