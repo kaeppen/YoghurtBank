@@ -102,7 +102,6 @@ else
     {
         authState = await auth.GetAuthenticationStateAsync();
 
-        //find user
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
         user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
         Student = user.UserType == "Student";
@@ -112,16 +111,13 @@ else
         var claims = auth.GetAuthenticationStateAsync().Result.User.Claims;
         foreach (var claim in claims)
         {
-            //navn
-            //email
+
             if (claim.Type.Equals("name")) name = claim.Value;
             if (claim.Type.Equals("preferred_username")) mail = claim.Value;
         }
 
 
-
-        requests = await
-        Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
+        requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
 
     }
 
@@ -155,9 +151,7 @@ else
             Status = CollaborationRequestStatus.ApprovedByStudent
         };
 
-        await
-        Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}",
-        updated);
+        await Http.PutAsJsonAsync<CollaborationRequestUpdateDTO>($"https://localhost:7095/api/collaborationRequest/{request.Id}", updated);
 
         await OnInitializedAsync();
 

@@ -47,10 +47,6 @@ else
             <p class="card-text">Time of creation: <br> @idea.Posted.Date</p>
             
         </div>
-        <div class="card-body">
-            @* <button type="button" class="btn btn-primary" style="background-color: green" @onclick="RequestCollab">Request collaboration</button> *@
-            @* <button type="button" class="btn btn-primary" @onclick="@(() => Nav(idea.Id))">Show details</button> *@ 
-        </div>
     </div>
     }
 }
@@ -72,22 +68,18 @@ else
 
         authState = await auth.GetAuthenticationStateAsync();
 
-        //find user
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
         user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
         
-        //find users ideas if super
         if(user.UserType == "Supervisor")
         {
             ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7095/api/idea/user/{user.Id}");
         }
     }
 
-
-
     private void Nav(int id)
     {
-        NavMan.NavigateTo($"https://localhost:7194/ideadetails/{id}");
+        NavMan.NavigateTo($"https://localhost:7095/ideadetails/{id}");
     }
     
 }

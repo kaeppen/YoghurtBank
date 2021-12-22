@@ -164,7 +164,6 @@ namespace YoghurtBank.ServicesTests
         public async Task DeleteAsync_given_invalid_id_returns_null()
         {
             var id = 500;
-            //make sure it doesnt exists initally
             var entity = await _context.Ideas.FindAsync(id);
             Assert.Null(entity);
 
@@ -264,12 +263,6 @@ namespace YoghurtBank.ServicesTests
             Assert.Equal(_now, result.StartDate);
             Assert.Equal(IdeaType.Bachelor, result.Type);
             #endregion
-        }
-
-        [Fact]
-        public async Task CreateAsync_given_something_something()
-        {
-
         }
 
         [Fact]

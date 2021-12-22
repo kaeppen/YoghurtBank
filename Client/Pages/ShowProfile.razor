@@ -50,8 +50,6 @@ else
 
             <div class="card-body" style="background-color: @Background; border-color: black; border-width: 5px; border-radius: 10px; margin-bottom: 5px; width: 50em;">
                <h5 class="card-title">Title <br> @request.Application</h5>
-               @* <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green">Approve</button> 
-               <button type="button" class="btn btn-secondary" style="background-color: red">Decline</button>  *@
             </div> 
         }
     </div>
@@ -76,8 +74,6 @@ else
 
             <div class="card-body" style="background-color: @Background; border-color: black; border-width: 5px; border-radius: 10px; margin-bottom: 5px; width: 50em;">
                <h5 class="card-title">Title <br> @request.Application</h5>
-               @* <button type="button" id="Approvebtn" class="btn btn-primary" style="background-color: green">Approve</button> 
-               <button type="button" class="btn btn-secondary" style="background-color: red">Decline</button>  *@
             </div>
         }
         </div>
@@ -99,14 +95,13 @@ else
     {
         authState = await auth.GetAuthenticationStateAsync();
 
-        //find user
+
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
         user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
         
-        //find users requests
+
         requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
 
-        //find users ideas if super
         if(user.UserType == "Supervisor")
         {
             ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7095/api/idea/user/{user.Id}");

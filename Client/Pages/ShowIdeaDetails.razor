@@ -62,7 +62,6 @@ else
 
         authState = await auth.GetAuthenticationStateAsync();
 
-        //find user
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
         user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
     }
@@ -70,7 +69,7 @@ else
     protected override async Task OnParametersSetAsync()
     {
         idea = await Http.GetFromJsonAsync<IdeaDetailsDTO>($"https://localhost:7095/api/idea/{ideaId}");
-        await base.OnParametersSetAsync(); //is this necessary?
+        await base.OnParametersSetAsync(); 
     }
     private void RequestCollab(int id)
     {

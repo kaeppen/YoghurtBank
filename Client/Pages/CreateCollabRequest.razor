@@ -41,17 +41,13 @@ else
         <label for="Application">Application</label>
         <InputTextArea id="Application" @bind-Value="request.Application" class="form-control" />
     </div>
-    <!-- <div class="form-group">
-        <label for="AmountOfCollaborators">Amount of collaborators</label>
-        <InputNumber id="Description" @bind-Value="request.AmountOfCollaborators" class="form-control" />
-    </div> EN CREATEDTO TAGER PT. IKKE ET AMOUNT OF COLLABS-->
+
     @if(IsUnsolicited && supervisors != null)
     {
         <p class="card-text">Available supervisors:</p>
                <ul class="list-group list-group-flush">
                    @foreach (var super in supervisors)
                    {
-                       //function call with parameter courtesy of: https://github.com/dotnet/aspnetcore/issues/10138 
                        <li class="list-group-item"><button @onclick="@(() => PickSupervisor(super.Id))" class="btn btn-secondary">@super.UserName</button></li>
                    }
                </ul>
@@ -110,7 +106,6 @@ else
         } 
     }
     
-    //"bypassing" HandleValidSubmit
     private async Task Create()
     {
         var result = await Http.PostAsJsonAsync("https://localhost:7095/api/collaborationrequest", request);

@@ -11,7 +11,6 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
 
     public async Task<CollaborationRequestDetailsDTO> CreateAsync(CollaborationRequestCreateDTO request)
     {
-        //husk null-checking
         var student = (Student)await _context.Users.FindAsync(request.StudentId);
         if (student == null) return null;
         var super = (Supervisor)await _context.Users.FindAsync(request.SupervisorId);
@@ -23,7 +22,7 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
             Requestee = super,
             Application = request.Application,
             Idea = await _context.Ideas.FindAsync(request.IdeaId),
-            Status = CollaborationRequestStatus.Waiting // bliver status ikke sat automatisk
+            Status = CollaborationRequestStatus.Waiting 
         };
 
         _context.CollaborationRequests.Add(entity);
@@ -51,8 +50,6 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
             return null;
         }
 
-        //husk null-checking
-
         return new CollaborationRequestDetailsDTO
         {
             Id = collabRequest.Id,
@@ -79,7 +76,6 @@ public class CollaborationRequestRepository : ICollaborationRequestRepository
 
     public async Task<IReadOnlyCollection<CollaborationRequestDetailsDTO>> FindRequestsByIdeaAsync(int ideaId)
     {
-        //husk null-checking på c.idea 
         var requests = await _context.CollaborationRequests.Where(c => c.Idea.Id == ideaId).Select(c => new CollaborationRequestDetailsDTO
         {
             Id = c.Id,

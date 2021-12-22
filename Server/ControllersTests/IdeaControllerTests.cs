@@ -6,9 +6,9 @@ public class IdeaControllerTests
 
     public IdeaControllerTests()
     {
-        var logMock = new Mock<ILogger<IdeaController>>();
         _repoMock = new Mock<IIdeaRepository>();
-        _controller = new IdeaController(logMock.Object, _repoMock.Object);
+         var logMock = new Mock<ILogger<IdeaController>>();
+        _controller = new IdeaController(logMock.Object,  _repoMock.Object);
 
     }
 
@@ -153,12 +153,6 @@ public class IdeaControllerTests
         var result = await _controller.Put(1, ideaUpdateDTO1);
 
         Assert.Equal(details, result);
-    }
-
-    [Fact]
-    public async Task Put_given_invalid_idea_returns_something()
-    {
-        //denne skal laves når metoden er på plads. husk at rette navnet. 
     }
 
     [Fact]
