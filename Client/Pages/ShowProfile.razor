@@ -9,80 +9,73 @@
 
 <!-- Grid courtesy of https://getbootstrap.com/docs/4.0/layout/grid/ -->
 
-
-@if (user == null)
-{
-    <p><em>You have to be registrated to get access to this site</em></p>
-        <div class="card-body">
-            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
-        </div>
-}
-else
+@if (Loaded)
 {
     if(user.UserType == "Supervisor")
     {
         <div class="container">
-        <h1>Hello @user.UserName, welcome to your profile!</h1>
-        <h4>My email: @user.Email</h4>
-        <br>
+            <h1>Hello @user.UserName, welcome to your profile!</h1>
+            <h4>My email: @user.Email</h4>
+            <br>
         </div>
         <div class="container">
-        <div class="row">
-        <div class="col-sm">
+            <div class="row">
+                <div class="col-sm">
 
-        <h3>My ideas</h3>
-        <div class="card-body">
-        <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
-        </div>
-        @foreach (var idea in ideas)
-        {
-        <div class="card-body">
-            <h5 class="card-title"><br> @idea.Title</h5>
-            <button type="button" class="btn btn-primary" @onclick="@(() => NavIdea(idea.Id))">Show details</button> 
-        </div>
-        }
-    </div>
-    <div class="col-sm">
-        <h3>My collaborationrequests</h3>
-        @foreach (var request in requests)
-        {
-            SetBackgroundColor(request);
+                    <h3>My ideas</h3>
+                    <div class="card-body">
+                        <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
+                    </div>
+                    @foreach (var idea in ideas)
+                    {
+                        <div class="card-body">
+                            <h5 class="card-title"><br> @idea.Title</h5>
+                            <button type="button" class="btn btn-primary" @onclick="@(() => NavIdea(idea.Id))">Show details</button> 
+                        </div>
+                    }
+                </div>
+                <div class="col-sm">
+                    <h3>My collaborationrequests</h3>
+                    @foreach (var request in requests)
+                    {
+                        SetBackgroundColor(request);
 
-            <div class="card-body" style="background-color: @Background; border-color: black; border-width: 5px; border-radius: 10px; margin-bottom: 5px; width: 50em;">
-               <h5 class="card-title">Title <br> @request.Application</h5>
-            </div> 
-        }
-    </div>
-  </div>
-</div>
+                        <div class="card-body" style="background-color: @Background; border-color: black; border-width: 5px; border-radius: 10px; margin-bottom: 5px; width: 50em;">
+                            <h5 class="card-title">Title <br> @request.Application</h5>
+                        </div> 
+                    }
+                </div>
+            </div>
+        </div>
     }
     else 
     {
         <div class="container">
-        <div class="container">
-        <h1>Hello @user.UserName, welcome to your profile!</h1>
-        <h4>My email: @user.Email</h4>
-        </div>
-        <br>
-        <div class="container">
-        <div class="row">
-        <div class="col-sm">
-        <h3>My collaborationrequests</h3>
-        @foreach (var request in requests)
-        {
-            SetBackgroundColor(request);
-
-            <div class="card-body" style="background-color: @Background; border-color: black; border-width: 5px; border-radius: 10px; margin-bottom: 5px; width: 50em;">
-               <h5 class="card-title">Title <br> @request.Application</h5>
+            <div class="container">
+                <h1>Hello @user.UserName, welcome to your profile!</h1>
+                <h4>My email: @user.Email</h4>
             </div>
-        }
-        </div>
-        </div>
-        </div>
+            <br>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
+                        <h3>My collaborationrequests</h3>
+                        @foreach (var request in requests)
+                        {
+                            SetBackgroundColor(request);
+
+                            <div class="card-body" style="background-color: @Background; border-color: black; border-width: 5px; border-radius: 10px; margin-bottom: 5px; width: 50em;">
+                                <h5 class="card-title">Title <br> @request.Application</h5>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
 
     }
 }
+
 
 @code {
     private UserDetailsDTO? user;
@@ -90,6 +83,7 @@ else
     private CollaborationRequestDetailsDTO[]? requests; 
     private AuthenticationState authState;
     private string Background {get; set;} = "yellow";
+    private bool Loaded = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,15 +91,26 @@ else
 
 
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
-        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
-        
 
-        requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
-
-        if(user.UserType == "Supervisor")
+        try
         {
-            ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7095/api/idea/user/{user.Id}");
+            user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+            requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
+
+            if(user.UserType == "Supervisor")
+            {
+                ideas = await Http.GetFromJsonAsync<IdeaDetailsDTO[]>($"https://localhost:7095/api/idea/user/{user.Id}");
+            }
+            Loaded = true; 
+
         }
+        catch (Exception e)
+        {
+            NavMan.NavigateTo("https://localhost:7095/registerUser");
+        }
+
+
+        
     }
 
     private void NavCreate()
