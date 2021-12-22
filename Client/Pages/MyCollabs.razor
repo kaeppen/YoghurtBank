@@ -8,15 +8,7 @@
 @inject AuthenticationStateProvider auth
 
 
-@if (user == null)
-{
-    <p><em>You have to be registrated to get access to this site</em></p>
-    <div class="card-body">
-    <button type="button" class="btn btn-primary" onclick="location.href ='https://localhost:7095/registerUser'">Go to
-        registration</button>
-</div>
-}
-else
+@if(Loaded)
 {
 
     <PageTitle>View My CollaborationRequest</PageTitle>
@@ -96,6 +88,7 @@ else
     private bool Student { get; set; } = false;
 
     private AuthenticationState authState;
+    private bool Loaded;
 
 
     protected override async Task OnInitializedAsync()
@@ -103,22 +96,29 @@ else
         authState = await auth.GetAuthenticationStateAsync();
 
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
-        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
-        Student = user.UserType == "Student";
 
-        var name = "";
-        mail = "";
-        var claims = auth.GetAuthenticationStateAsync().Result.User.Claims;
-        foreach (var claim in claims)
+        try
         {
+            user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+            Loaded = true; 
+            Student = user.UserType == "Student";
 
-            if (claim.Type.Equals("name")) name = claim.Value;
-            if (claim.Type.Equals("preferred_username")) mail = claim.Value;
+            var name = "";
+            mail = "";
+            var claims = auth.GetAuthenticationStateAsync().Result.User.Claims;
+            foreach (var claim in claims)
+            {
+
+                if (claim.Type.Equals("name")) name = claim.Value;
+                if (claim.Type.Equals("preferred_username")) mail = claim.Value;
+            }
+
+            requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
         }
-
-
-        requests = await Http.GetFromJsonAsync<CollaborationRequestDetailsDTO[]>($"https://localhost:7095/api/collaborationRequest/id/{user.Id}");
-
+        catch (Exception e)
+        {
+            NavMan.NavigateTo("https://localhost:7095/registerUser");
+        }
     }
 
     private void SetBackgroundColor(CollaborationRequestDetailsDTO request)
