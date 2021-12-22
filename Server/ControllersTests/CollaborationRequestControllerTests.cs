@@ -15,33 +15,11 @@ public class CollaborationRequestControllerTests
 
     public CollaborationRequestControllerTests()
     {
-        var logMock = new Mock<ILogger<CollaborationRequestController>>();
         _repoMock = new Mock<ICollaborationRequestRepository>();
-        _controller = new CollaborationRequestController(logMock.Object, _repoMock.Object);
+        var logMock = new Mock<ILogger<CollaborationRequestController>>();
+        _controller = new CollaborationRequestController(logMock.Object,  _repoMock.Object);
     }
 
-    [Fact]
-    public async Task Get_returns_two_requests()
-    {
-        var cb1 = new CollaborationRequestDetailsDTO
-        {
-            StudentId = 1,
-            SupervisorId = 2,
-            Application = "Science",
-            Status = CollaborationRequestStatus.Waiting
-        };
-        var cb2 = new CollaborationRequestDetailsDTO
-        {
-            StudentId = 3,
-            SupervisorId = 4,
-            Application = "Not Science",
-            Status = CollaborationRequestStatus.Waiting
-        };
-        var expected = new List<CollaborationRequestDetailsDTO> { cb1, cb2 };
-        var result = await _controller.Get();
-
-        Assert.Equal(expected, result);
-    }
 
     [Fact]
     public async Task FindByStudent_returns_students_requests_from_repo()
@@ -122,11 +100,10 @@ public class CollaborationRequestControllerTests
         _repoMock.Setup(m => m.CreateAsync(toCreate)).ReturnsAsync(cb1);
 
 
-        var result = await _controller.Post(toCreate) as CreatedAtActionResult;
+        var result = await _controller.Post(toCreate);
 
-        Assert.Equal(cb1, result?.Value);
-        Assert.Equal("Get", result?.ActionName);
-        Assert.Equal(KeyValuePair.Create("Application", (object?)"Science"), result?.RouteValues?.Single());
+        Assert.Equal(cb1, result);
+        Assert.NotNull(result);
     }
 
 

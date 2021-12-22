@@ -7,8 +7,8 @@
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
     private readonly IUserRepository _repository;
+     private readonly ILogger<UserController> _logger;
 
     public UserController(ILogger<UserController> logger, IUserRepository repository)
     {
@@ -17,7 +17,6 @@ public class UserController : ControllerBase
     }
 
     [ProducesResponseType(typeof(UserDetailsDTO), StatusCodes.Status201Created)]
-    //[ProducesResponseType(typeof(UserDetailsDTO), StatusCodes.Sta)] 
     [HttpPost]
     public async Task<UserDetailsDTO> Post(UserCreateDTO user)
     {
@@ -44,8 +43,6 @@ public class UserController : ControllerBase
 
     }
 
-
-    [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpDelete("{id}")]

@@ -8,69 +8,64 @@
 @attribute [Authorize]
 @inject HttpClient Http
 
-@if (user == null)
-{
-    <p><em>You have to be registrated to get access to this site</em></p>
-        <div class="card-body">
-            <button type="button" class="btn btn-primary" onclick= "location.href ='https://localhost:7095/registerUser'">Go to registration</button> 
-        </div>
-
-}
-else
-{
-
 <PageTitle>All ideas</PageTitle>
-
-<div style="display: flex">
-@if(ideas == null || ideas.Length == 0)
+@if (Loaded)
 {
-    <h1>No ideas - get creatin'!</h1>
-    @if(IsSuper)
-    {
-        <div class="card-body">
-        <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
-        </div>
-    }
-}
-else 
-{
-    @if(IsSuper)
-    {
-        <div class="card-body">
-        <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
-        </div>
-    }
-    foreach(var idea in ideas)
-    {
-        <div class="card" style="width: 18rem;">
-        <div class="card-header">
-            @idea.Title
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Subject: <br> @idea.Subject</h5>
-            <p class="card-text">Description: <br> @idea.Description</p>
-            <p class="card-text">Type of idea: <br> @idea.Type</p>
-            <p class="card-text">Creator (skal nok laves om, et id kan ikke bruges til meget): <br> @idea.CreatorId</p>
-            <p class="card-text">Amount of participants: <br> @idea.AmountOfCollaborators</p>
-            <p class="card-text">State: <br> @idea.Open</p>
-            <p class="card-text">Date of creation: <br> @idea.Posted.ToShortDateString()</p>
+    <div style="display: flex">
+        @if(ideas == null || ideas.Length == 0)
+        {
+            <h1>No ideas - get creatin'!</h1>
+            @if(IsSuper)
+            {
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
+                </div>
+            }
+        }
+        else 
+        {
+            @if(IsSuper)
+            {
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary" @onclick="NavCreate">Create idea</button> 
+                </div>
+            }
+            foreach(var idea in ideas)
+            {
+                <div class="card" style="width: 18rem;">
+                    <div class="card-header">
+                        @idea.Title
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Subject: <br> @idea.Subject</h5>
+                        <p class="card-text">Description: <br> @idea.Description</p>
+                        <p class="card-text">Type of idea: <br> @idea.Type</p>
+                        <p class="card-text">Creator (skal nok laves om, et id kan ikke bruges til meget): <br> @idea.CreatorId</p>
+                        <p class="card-text">Amount of participants: <br> @idea.AmountOfCollaborators</p>
+                        <p class="card-text">State: <br> @idea.Open</p>
+                        <p class="card-text">Date of creation: <br> @idea.Posted.ToShortDateString()</p>
             
-        </div>
-        <div class="card-body">
-            <button type="button" class="btn btn-primary" style="background-color: green" @onclick="@(() => RequestCollab(idea.Id))">Request collaboration</button>
-            <button type="button" class="btn btn-primary" @onclick="@(() => Nav(idea.Id))">Show details</button> 
-        </div>
+                    </div>
+                    <div class="card-body">
+                        <button type="button" class="btn btn-primary" style="background-color: green" @onclick="@(() => RequestCollab(idea.Id))">Request collaboration</button>
+                        <button type="button" class="btn btn-primary" @onclick="@(() => Nav(idea.Id))">Show details</button> 
+                    </div>
+                </div>
+            }
+        }
     </div>
-    }
 }
-</div>
-}
+
+
+
+
 
 @code {
     private IdeaDetailsDTO[]? ideas;
     private UserDetailsDTO? user;
     private AuthenticationState authState;
-    private bool IsSuper; 
+    private bool IsSuper;
+    private bool Loaded;
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,8 +74,17 @@ else
         authState = await auth.GetAuthenticationStateAsync();
 
         var mail = authState.User.Claims.Where(c => c.Type.Equals("preferred_username")).Select(c => c.Value).FirstOrDefault();
-        user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
-        if(user.UserType == "Supervisor") IsSuper = true;
+
+        try
+        {
+            user = await Http.GetFromJsonAsync<UserDetailsDTO>($"https://localhost:7095/api/users/mail/{mail}");
+            if (user.UserType == "Supervisor") IsSuper = true;
+            Loaded = true; 
+        }
+        catch (Exception e)
+        {
+            NavMan.NavigateTo("https://localhost:7095/registerUser");
+        }
     }
 
     private void Nav(int id)

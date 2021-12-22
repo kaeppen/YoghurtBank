@@ -122,10 +122,10 @@ else
         else 
         {
             DateError = false;
-            //chop off timestamps
+
             end = end.Date.ToUniversalTime(); 
             idea.StartDate = idea.StartDate.Date.ToUniversalTime(); 
-            //calculate time to complete 
+
             idea.TimeToComplete = (end-idea.StartDate); 
             idea.Open = true; 
             var result = await Http.PostAsJsonAsync("https://localhost:7095/api/idea", idea);

@@ -1,6 +1,3 @@
-
-    public record UserDTO(int Id, string UserName);
-
     public record UserDetailsDTO
     {
         public int Id { get; set; }

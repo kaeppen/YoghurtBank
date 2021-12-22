@@ -4,6 +4,7 @@
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class IdeaController : ControllerBase
 {
+
     private readonly ILogger<IdeaController> _logger;
     private readonly IIdeaRepository _repository;
 
@@ -14,7 +15,6 @@ public class IdeaController : ControllerBase
     }
 
 
-    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(IdeaDetailsDTO), StatusCodes.Status200OK)]
     [HttpGet("{id}")]
@@ -34,7 +34,6 @@ public class IdeaController : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(IReadOnlyCollection<IdeaDetailsDTO>), StatusCodes.Status200OK)]
-    [AllowAnonymous]
     [HttpGet]
     public async Task<IReadOnlyCollection<IdeaDetailsDTO>> GetAll()
     {
@@ -42,16 +41,15 @@ public class IdeaController : ControllerBase
 
     }
 
-        [Authorize]
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<int?> Delete(int id)
-        { 
-            return await _repository.DeleteAsync(id);
-        }
 
-    [AllowAnonymous]
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<int?> Delete(int id)
+    { 
+        return await _repository.DeleteAsync(id);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(IdeaDetailsDTO), 201)]
     public async Task<IdeaDetailsDTO> Post(IdeaCreateDTO idea)
@@ -60,7 +58,6 @@ public class IdeaController : ControllerBase
     }
 
 
-    [Authorize]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType( StatusCodes.Status204NoContent)]

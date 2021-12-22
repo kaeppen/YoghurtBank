@@ -16,9 +16,9 @@ public class UserControllerTests
 
     public UserControllerTests()
     {
-        var logMock = new Mock<ILogger<UserController>>();
         _repoMock = new Mock<IUserRepository>();
-        _controller = new UserController(logMock.Object, _repoMock.Object);
+         var logMock = new Mock<ILogger<UserController>>();
+        _controller = new UserController(logMock.Object,  _repoMock.Object);
 
     }
 

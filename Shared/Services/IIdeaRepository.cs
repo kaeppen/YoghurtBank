@@ -1,7 +1,4 @@
-﻿
-
-
-    public interface IIdeaRepository
+﻿    public interface IIdeaRepository
     {
         Task<(HttpStatusCode code, IReadOnlyCollection<IdeaDetailsDTO> list)> FindIdeasBySupervisorIdAsync(int userId);
         Task<IdeaDetailsDTO> FindIdeaDetailsAsync(int IdeaId);

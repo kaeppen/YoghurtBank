@@ -36,17 +36,6 @@
         public IdeaType Type { get; set; }
     }
 
-
-    public record IdeaDTO
-    {
-        public int Id { get; set; }
-        [StringLength(100)]
-        public string Title { get; set; }
-        [StringLength(100)]
-        public string Subject { get; set; }
-        public IdeaType Type { get; set; }
-    }
-
     public record IdeaDetailsDTO
     {
         public int CreatorId { get; init; }
