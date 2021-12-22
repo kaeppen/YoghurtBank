@@ -13,9 +13,3 @@ dotnet user-secrets set "ConnectionStrings:Yoghurtbase:connectionString" "$conne
 Write-Host "Starting App"
 dotnet run --project $project
 
-
-#det skal testes på en maskine der er "ren" og ikke har user secrets mv. i forvejen. 
-#derudover skal det testes på forskellige os
-
-#vi kan selv bestemme om vi vil lave et autogenereret password eller hvad vi vil i guess? 
-#tyvstjålet fra rasmus repo 
