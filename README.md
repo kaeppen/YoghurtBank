@@ -3,7 +3,6 @@
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=flat-square&logo=appveyor&logo=.net&logoColor=white)
 
 # YoghurtBank
-New repo, see old: https://github.com/kaeppen/YoghurtBank1.0 for history
 --------------------------------------------------------------------------------------------
 Requirements for running the program: 
 - dotnet 6.0 
@@ -21,4 +20,7 @@ How to run the program:
 
 
 --------------------------------------------------------------------------------------------
-This repository has provided inspiration for the project: https://github.com/ondfisk/BDSA2021  
+New repo, see old: https://github.com/kaeppen/YoghurtBank1.0 for history
+--------------------------------------------------------------------------------------------
+This repository has provided inspiration for the project: https://github.com/ondfisk/BDSA2021
+--------------------------------------------------------------------------------------------
