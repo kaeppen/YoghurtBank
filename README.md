@@ -2,7 +2,7 @@
 ![C#](https://img.shields.io/badge/c%23-%23239120.svg??style=flat-square&logo=appveyor&logo=c-sharp&logoColor=white)
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=flat-square&logo=appveyor&logo=.net&logoColor=white)
 
-# YoghurtBank 
+YoghurtBank 
 --------------------------------------------------------------------------------------------
 
 Requirements for running the program: 
